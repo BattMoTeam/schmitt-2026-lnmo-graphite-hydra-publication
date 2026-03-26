@@ -2,46 +2,72 @@
 
 This repository accompanies the paper "Comprehensive parameter and electrochemical dataset for a 1 Ah graphite/LNMO battery cell for physical modelling as a blueprint for data reporting in battery research" by Schmitt et al.
 
-The primary scientific workflow is a BattMo workflow for:
+The repository demonstrates the following workflow
 
-- equilibrium calibration
-- high-rate calibration
-- validation against the experimental discharge dataset
-- publication of the calibrated parameter set
+1. low-rate calibration
+2. high-rate calibration
+3. validation against the experimental discharge dataset
 
 ## Get Started
 
 1. Clone this repository.
 2. Clone BattMo locally.
 3. Set `BATTMO_DIR` to the BattMo root containing `startupBattMo.m`.
-4. Optionally set `HYDRA_PYTHON_EXECUTABLE` for BattMo JSON validation.
-5. Start MATLAB in the repository root and run:
+4. Start MATLAB and run the `startupBattMo.m` script.
 
+
+## Main Entry Points
+
+- Low-rate calibration: `scripts/low-rate-calibration/runEquilibriumCalibration.m`
+- High-rate calibration: `scripts/high-rate-calibration/runHighRateCalibration.m`
+- Validation: `scripts/runValidation.m`
+- Generate all figures in the paper: `scripts/exportPublicationFigures.m`
+- Generate interactive documentation: `run-publication.ps1`
+
+
+## FAIR Data and Interoperability
+
+This repository includes FAIR-data exports alongside the primary BattMo workflow.
+
+The BattMo JSON files are the canonical model inputs for the published workflow. The JSON-LD and BPX files are included to support machine readability and interoperability with PyBaMM and BattMo.
+
+To export the BattMo validation reference curves from MATLAB, do
 ```matlab
 startup
+run(fullfile('scripts', 'exportValidationReference.m'));
+```
+Then compare BattMo and PyBaMM with
+```powershell
+python scripts\compare_battmo_pybamm.py
+```
+Some BattMo-specific features cannot be represented exactly in standard BPX:
+- the graphite negative-electrode `j0(soc)` table
+- independent volumetric surface area and active-material volume fraction
+- cathode OCP boundary behavior outside the first tabulated stoichiometry point
+Accordingly:
+- the graphite `j0(soc)` data is approximated by a single BPX reaction-rate constant
+- BattMo surface-area scaling is folded into exported reaction-rate constants
+- the cathode OCP table includes a boundary extrapolation
+
+See also
+```powershell
+.\run-publication.ps1 -IncludeBpx
 ```
 
-To reproduce the publication-facing BattMo outputs, run:
+
+## Documentation
+
+To generate the interactive documentation, run from the repository root:
 
 ```powershell
 .\run-publication.ps1
 ```
+or
+```powershell
+python -m pip install -r requirements-docs.txt
+python -m mkdocs serve
+```
 
-## Main Entry Points
-
-- [`run-publication.ps1`](./run-publication.ps1): BattMo-first publication workflow
-- [`PUBLICATION_WORKFLOW.md`](./PUBLICATION_WORKFLOW.md): what the publication runner produces
-- [`REPRODUCIBILITY.md`](./REPRODUCIBILITY.md): environment and rerun guidance
-- [`DATA_GUIDE.md`](./DATA_GUIDE.md): repository structure, naming, and canonical outputs
-- [`FAIR_DATA.md`](./FAIR_DATA.md): linked-data JSON-LD and optional BPX / PyBaMM interoperability
-- [`docs`](./docs): GitHub Pages-ready interactive site
-
-## Core Contents
-
-- [`raw-data`](./raw-data): experimental input data
-- [`parameters`](./parameters): BattMo base and calibrated parameter files
-- [`linked-data`](./linked-data): JSON-LD publication metadata
-- [`figures`](./figures): publication figures and supporting simulation outputs
 
 ## Citation
 
