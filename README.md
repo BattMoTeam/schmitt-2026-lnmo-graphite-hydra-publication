@@ -2,11 +2,7 @@
 
 This repository accompanies the paper "Comprehensive parameter and electrochemical dataset for a 1 Ah graphite/LNMO battery cell for physical modelling as a blueprint for data reporting in battery research" by Schmitt et al.
 
-The repository demonstrates the following workflow
-
-1. low-rate calibration
-2. high-rate calibration
-3. validation against the experimental discharge dataset
+The repository demonstrates the P2D model calibration workflow described in the paper, starting with low-rate calibration under equilibrium assumptions, a calibration against high-rate data and final validation.
 
 ## Get Started
 
@@ -38,7 +34,7 @@ run(fullfile('scripts', 'exportValidationReference.m'));
 ```
 Then compare BattMo and PyBaMM with
 ```powershell
-python scripts\compare_battmo_pybamm.py
+python scripts/compare_battmo_pybamm.py
 ```
 Some BattMo-specific features cannot be represented exactly in standard BPX:
 - the graphite negative-electrode `j0(soc)` table
@@ -51,7 +47,7 @@ Accordingly:
 
 See also
 ```powershell
-.\run-publication.ps1 -IncludeBpx
+run-publication.ps1 -IncludeBpx
 ```
 
 
