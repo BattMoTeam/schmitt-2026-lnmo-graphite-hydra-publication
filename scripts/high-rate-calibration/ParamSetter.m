@@ -112,11 +112,6 @@ classdef ParamSetter
                 vf = model.(elyte).volumeFraction;
                 model.(elyte).effectiveThermalConductivity = vf .^ bg .* model.(elyte).thermalConductivity;
 
-            end
-
-
-            if model.use_thermal
-
                 G = model.G;
                 nc = G.getNumberOfCells();
 

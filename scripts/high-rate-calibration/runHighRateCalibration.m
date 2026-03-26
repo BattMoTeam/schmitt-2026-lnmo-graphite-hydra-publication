@@ -1,17 +1,18 @@
-% Script to calibrate parameters using high-rate data
+%% Script to calibrate parameters using high-rate data
 
 clear all
 close all
 
-Dnes = [1e-14, 1e-13]; % do 1e-13 last as this is the one to use
+Dnes = [1e-14, 1e-13]; % Do 1e-13 last as this is the one to use
+
 % tag = 'no-elyte-params';
 % tag = 'one-elyte-param';
 % tag = 'two-elyte-params';
-% tag = 'three-elyte-params'; % 1e-13 goes to it=150
+% tag = 'three-elyte-params';
 
 tags = {%'no-elyte-params', ...
         % 'one-elyte-param', ...
-        % %'one-elyte-param-finers', ...
+        % 'one-elyte-param-finers', ...
         % 'two-elyte-params', ...
         'three-elyte-params'
        };
@@ -58,7 +59,6 @@ for itag = 1:numel(tags)
 
         %% Fetch experimental data
 
-        % Original data
         datafilename = fullfile(getHydra0Dir(), 'raw-data', 'TE_1473.mat');
         saveddata    = load(datafilename);
         dataraw      = saveddata.experiment;
@@ -83,22 +83,11 @@ for itag = 1:numel(tags)
             error('Unexpected tag %s', tag);
         end
 
-        % Find capacity
+        % Estimate capacity
         inputCap  = struct('lowRateParams'             , jsonstructEC, ...
                            'include_current_collectors', true);
         outputCap = runHydra(inputCap, 'runSimulation', false);
         cap       = computeCellCapacity(outputCap.model);
-
-        % Diffusion must be a scalar when calibrated
-        % Dne = mean(computeDanodeH0b(linspace(0, 1, 100)));
-        % Dpe = mean(computeDcathodeH0b(linspace(0.14, 1, 100)));
-
-        % Both electrodes with Ds = 1e-14
-        % Graphite: Ds= 1e-13 and LNMO: Ds=1e-14
-        % Dne = 1e-14;
-        % Dpe = 1e-14;
-        % Dne = [];
-        % Dpe = [];
 
         % Calculate Bruggeman coefficients from tortuosity and vf
         tortuosityRef = struct(pe, 3.46, ...
@@ -224,14 +213,6 @@ for itag = 1:numel(tags)
                                             'callbackfunc', callbackfunc, ...
                                             'plotEvolution', doplot);
 
-        % [vopt, Xopt, history] = unitBoxBFGS(X0, objective, ...
-        %                                     'objChangeTol', 1e-14 , ...
-        %                                     'gradTol'     , 1e-5  , ...
-        %                                     'maximize'    , false, ...
-        %                                     'maxit'       , 150  , ...
-        %                                     'logPlot'     , true, ...
-        %                                     'callbackfunc', callbackfunc);
-
         setupOpt = updateSetupFromScaledParameters(simulatorSetup, parameters, Xopt);
 
         fprintf('obj val=%1.2f (%1.2f), iter=%d\n', vopt, v0, numel(history.val));
@@ -252,7 +233,6 @@ for itag = 1:numel(tags)
 
         %% Run model with calibrated parameters
 
-
         inputOpt = struct('DRate'                         , expdata.I / cap * hour        , ...
                           'totalTime'                     , expdata.time(end)             , ...
                           'numTimesteps'                  , numTimesteps                  , ...
@@ -267,12 +247,12 @@ for itag = 1:numel(tags)
 
         expdataUinterp1 = @(t) interp1(expdata.time, expdata.U, t, 'linear', 'extrap');
         tt = getTime(outputOpt.states);
-        L2 = trapz(tt, (getE(outputOpt.states) - expdataUinterp1(tt)).^2) / tt(end);
+        RMSE = l2error(tt, getE(outputOpt.states), expdata.time, expdata.U, 'extrap', true);
 
         fprintf('Final least squares values:\n');
         fprintf('vopt: %g\n', vopt);
         fprintf('Sum of squares: %g\n', sum([vfinal{:}]));
-        fprintf('L2^2 error: %g\n', L2);
+        fprintf('RMSE: %g mV\n', RMSE/milli);
 
         if doplot
             % plot differences
@@ -313,9 +293,8 @@ for itag = 1:numel(tags)
 
         %% Quantify difference between experiment and calibrated
         tt = getTime(outputOpt.states);
-        wL2 = sqrt(trapz(tt, (getE(outputOpt.states) - expdataUinterp1(tt)).^2) / tt(end)) / milli;
-        fprintf('wL2 error after calibration %s Dne=%g Dpe=%g: %g mV\n', tag, Dne, Dpe, wL2);
-
+        RMSE = l2error(tt, getE(outputOpt.states), expdata.time, expdata.U, 'extrap', true);
+        fprintf('wL2 error after calibration %s Dne=%g Dpe=%g: %g mV\n', tag, Dne, Dpe, RMSE/milli);
 
         %% Print
 

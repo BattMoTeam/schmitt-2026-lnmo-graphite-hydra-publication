@@ -1,11 +1,11 @@
 %% Script to calibrate parameters under equilibrium assumptions
 
 clear all
-close all
+% close all
 
 diary(sprintf('_diary-%s-%s.txt', mfilename, datestr(now, 'yyyymmdd-HHMMSS')));
 
-mrstDebug(0);
+mrstDebug(99);
 
 set(0, 'defaultlinelinewidth', 2)
 set(0, 'defaulttextfontsize', 15);
@@ -26,22 +26,16 @@ printer = @(s) disp(jsonencode(s, 'PrettyPrint', true));
 
 %% Fetch experimental data
 
-% Smooth voltages
-datafilename = fullfile(getHydra0Dir(), 'raw-data', 'TE_1473smooth');
-saveddata    = load(datafilename);
-datasmooth   = saveddata.expsmooth;
-
-% Original data (for currents)
 datafilename = fullfile(getHydra0Dir(), 'raw-data', 'TE_1473.mat');
 saveddata    = load(datafilename);
 dataraw      = saveddata.experiment;
 
-% Pack data with lowest rate (first item)
-expdata = struct('time' , datasmooth.time{1} * hour                           , ...
-                 'U'    , datasmooth.voltage{1}                               , ...
-                 'cap'  , abs(trapz(dataraw.time{1}*hour, dataraw.current{1})), ...
-                 'I'    , abs(mean(dataraw.current{1}))                       , ...
-                 'DRate', datasmooth.crate{1});
+% Lowest DRate is first
+expdata = struct('time', dataraw.time{1} * hour        , ...
+                 'U'   , dataraw.voltage{1}            , ...
+                 'cap' , abs(trapz(dataraw.time{1}*hour, dataraw.current{1})), ...
+                 'I'   , abs(mean(dataraw.current{1})));
+expdata.DRate = expdata.I / expdata.cap * hour;
 
 %% Initial guess simulation
 
@@ -53,10 +47,7 @@ css0 = CellSpecificationSummary(outputInit.model);
 
 %% Setup and run optimization
 
-ecs = EquilibriumCalibrationSetupWithDebug(outputInit.model, expdata);
-NP = 1.3;
-
-ecs = ecs.setupCalibrationCase(1, 'np_ratio', NP);
+ecs = EquilibriumCalibrationSetup(outputInit.model, expdata);
 
 doipopt = false;
 
@@ -66,7 +57,8 @@ if doipopt
     [Xopt, info] = ecs.runIpOpt(ipoptOptions);
     iter = info.iter;
 else
-    [Xopt, history] = ecs.runUnitBoxBFGS('plotEvolution', false);
+    [Xopt, history] = ecs.runUnitBoxBFGS('plotEvolution', false, ...
+                                         'useBounds', true);
     iter = numel(history.val);
 end
 
@@ -101,9 +93,9 @@ input = struct('DRate'        , expdata.I * hour / expdata.cap, ...
                'totalTime'    , expdata.time(end)             , ...
                'lowRateParams', jsonstructEC, ...
                'include_current_collectors', true);
-outputOpt = runHydra(input, 'clearSimulation', true);
+outputOpt = runHydra(input, 'clearSimulation', false);
 cssOpt = CellSpecificationSummary(outputOpt.model);
-fprintf('NPratio after calibration: %g\n', cssOpt.NPratio);
+fprintf('NP ratio after calibration: %g\n', cssOpt.NPratio);
 
 %% Plot
 
@@ -124,6 +116,9 @@ dosave = false;
 if dosave
     exportgraphics(fig, 'cell-balancing.png', 'resolution', 300);
 end
+
+RMSE = l2error(expdata.time, expdata.U, getTime(outputOpt.states), getE(outputOpt.states), 'extrap', true);
+fprintf('RMSE after calibration: %g mV\n', RMSE/milli);
 
 diary off;
 
