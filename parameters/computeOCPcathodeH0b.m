@@ -1,4 +1,4 @@
-function [OCP, dUdT] = computeOCPcathodeH0b(c, ~, cmax)
+function [OCP, dUdT] = computeOCPcathodeH0b(stoc)
 
     lnmo_ds = [
         0.140000000000000   4.875695054478530
@@ -38,7 +38,6 @@ function [OCP, dUdT] = computeOCPcathodeH0b(c, ~, cmax)
         1.000000000000000   2.995543758834360
               ];
 
-    stoc = c/cmax;
     OCP = interpTable(lnmo_ds(:,1), lnmo_ds(:,2), stoc, 'spline', false);
     dUdT = 0;
 

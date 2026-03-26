@@ -32,7 +32,7 @@ function output = runHydra(input, varargin)
                  'verbose'        , false   , ...
                  'clearSimulation', true    , ...
                  'outputDirectory', 'output', ...
-                 'validateJson'   , true);
+                 'validateJson'   , false);
 
     opt = merge_options(opt, varargin{:});
 
@@ -206,14 +206,23 @@ function output = runHydra(input, varargin)
         totalTime = input.totalTime;
     end
 
-    dt = totalTime / input.numTimesteps;
-    dt = rampupTimesteps(totalTime, dt, 10, 'threshold_error', 1e-8);
-    step = struct('val', dt, 'control', ones(numel(dt), 1));
+    % dt = totalTime / input.numTimesteps;
+    % dt = rampupTimesteps(totalTime, dt, 10, 'threshold_error', 1e-8);
+    % step = struct('val', dt, 'control', ones(numel(dt), 1));
 
-    tup = 1*minute;
-    cutOffVoltage = model.(ctrl).lowerCutoffVoltage;
-    srcfunc = @(t, I, E, Imax) rampupSwitchControl(t, tup, I, E, model.(ctrl).Imax, cutOffVoltage);
-    control = struct('src', srcfunc);
+    % tup = 1*minute;
+    % cutOffVoltage = model.(ctrl).lowerCutoffVoltage;
+    % srcfunc = @(t, I, E, Imax) rampupSwitchControl(t, tup, I, E, model.(ctrl).Imax, cutOffVoltage);
+    % control = struct('src', srcfunc);
+    % schedule = struct('control', control, 'step', step);
+
+    % keyboard;
+    timestep = struct('totalTime', totalTime, ...
+                      'numTimesteps', input.numTimesteps, ...
+                      'useRampup', true, ...
+                      'numberOfRampupSteps', 10);
+    step    = model.Control.setupScheduleStep(timestep);
+    control = model.Control.setupScheduleControl();
     schedule = struct('control', control, 'step', step);
 
     % Store variables

@@ -18,20 +18,21 @@
     ],
     "density": 1200,
     "diffusionCoefficient": {
-      "argumentlist": [
+      "argumentList": [
         "concentration",
         "temperature"
       ],
-      "functionname": "computeDiffusionCoefficient_Nyman2008"
+      "functionName": "computeDiffusionCoefficient_Nyman2008",
+      "functionFormat": "named function"
     },
     "ionicConductivity": {
-      "argumentlist": [
+      "argumentList": [
         "concentration",
         "temperature"
       ],
-      "functionname": "computeElectrolyteConductivity_Nyman2008",
+      "functionName": "computeElectrolyteConductivity_Nyman2008",
       "name": "conductivity",
-      "type": "function"
+      "functionFormat": "named function"
     },
     "name": "orgLiPF6",
     "species": {
@@ -46,24 +47,21 @@
         "Interface": {
           "chargeTransferCoefficient": 0.5,
           "exchangeCurrentDensity": {
-            "argumentlist": [
+            "argumentList": [
               "soc"
             ],
-            "functionname": "computeJ0anodeH0b",
-            "type": "function"
+            "functionName": "computeJ0anodeH0b",
+            "functionFormat": "named function"
           },
           "guestStoichiometry0": 0,
           "guestStoichiometry100": 1,
           "numberOfElectronsTransferred": 1,
           "openCircuitPotential": {
-            "argumentlist": [
-              "concentration",
-              "temperature",
-              "cmax"
+            "argumentList": [
+	      "stoichiometry"
             ],
-            "functionname": "computeOCPanodeH0b",
-            "name": "graphite OCP",
-            "type": "function"
+            "functionName": "computeOCPanodeH0b",
+            "functionFormat": "named function"
           },
           "saturationConcentration": 31360,
           "volumetricSurfaceArea": 1540000.0
@@ -72,7 +70,7 @@
           "activationEnergyOfDiffusion": 13820.0,
           "referenceDiffusionCoefficient": 1e-12,
           "particleRadius": 1.63e-05,
-	  "N": 10
+          "N": 10
         },
         "density": 2250,
         "diffusionModelType": "full",
@@ -114,13 +112,11 @@
           "guestStoichiometry100": 0.14,
           "numberOfElectronsTransferred": 1,
           "openCircuitPotential": {
-            "argumentlist": [
-              "concentration",
-              "temperature",
-              "cmax"
+            "argumentList": [
+              "stoichiometry"
             ],
-            "functionname": "computeOCPcathodeH0b",
-            "type": "function"
+            "functionName": "computeOCPcathodeH0b",
+            "functionFormat": "named function"
           },
           "reactionRateConstant": 2.33e-11,
           "saturationConcentration": 23761,
@@ -130,7 +126,7 @@
           "activationEnergyOfDiffusion": 5630.0,
           "referenceDiffusionCoefficient": 1e-12,
           "particleRadius": 8.94e-06,
-	  "N": 10
+          "N": 10
         },
         "density": 4200,
         "diffusionModelType": "full",
