@@ -30,6 +30,6 @@ fprintf('  figures/figure-13-high-rate-calibration-at-2C.png\n');
 fprintf('  figures/figure-14-experimental-voltages-and-p2d-results.fig\n');
 fprintf('  figures/figure-14-experimental-voltages-and-p2d-results.png\n');
 fprintf('  figures/supporting/...\n');
-fprintf('  figures/publication/INP5-70-120-H0B_graphite-lnmo_schmitt-2026_battmo-vs-experiment-summary.json\n');
-fprintf('  figures/publication/INP5-70-120-H0B_graphite-lnmo_schmitt-2026_battmo-vs-experiment.png\n');
+fprintf('  figures/publication/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_battmo-vs-experiment-summary.json\n');
+fprintf('  figures/publication/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_battmo-vs-experiment.png\n');
 fprintf('  figures/rate-study/battmo-rate-study-reference.json\n');

@@ -59,6 +59,7 @@ Invoke-Checked -FilePath $resolvedPython -Arguments @("scripts\plot_battmo_valid
 
 if ($IncludeBpx) {
     Write-Host "Running optional BPX / PyBaMM FAIR interoperability workflow..."
+    Invoke-Checked -FilePath $resolvedPython -Arguments @("scripts\export_battmo_parameters.py")
     Invoke-Checked -FilePath $resolvedPython -Arguments @("scripts\export_bpx.py")
     Invoke-Checked -FilePath $resolvedPython -Arguments @("scripts\verify_bpx.py", "--output", "codex\figures\bpx_verification_summary.json")
     Invoke-Checked -FilePath $resolvedPython -Arguments @("scripts\compare_battmo_pybamm.py")
@@ -66,13 +67,14 @@ if ($IncludeBpx) {
 
 Write-Host ""
 Write-Host "Validation outputs:"
-Write-Host "  figures\publication\INP5-70-120-H0B_graphite-lnmo_schmitt-2026_battmo-vs-experiment-summary.json"
-Write-Host "  figures\publication\INP5-70-120-H0B_graphite-lnmo_schmitt-2026_battmo-vs-experiment.png"
+Write-Host "  figures\publication\IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_battmo-vs-experiment-summary.json"
+Write-Host "  figures\publication\IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_battmo-vs-experiment.png"
 
 if ($IncludeBpx) {
     Write-Host ""
     Write-Host "Optional BPX / PyBaMM outputs:"
-    Write-Host "  parameters\INP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.bpx.json"
+    Write-Host "  parameters\IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.json"
+    Write-Host "  parameters\IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.bpx.json"
     Write-Host "  codex\figures\bpx_verification_summary.json"
     Write-Host "  codex\figures\battmo-vs-pybamm-bpx-summary.json"
     Write-Host "  codex\figures\battmo-vs-pybamm-bpx.png"

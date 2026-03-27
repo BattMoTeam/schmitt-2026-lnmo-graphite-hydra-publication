@@ -1,5 +1,5 @@
 site_name: Schmitt 2026 Battery Data Explorer
-site_description: Interactive BattMo-first documentation for the graphite/LNMO INP5-70-120-H0B dataset and publication figures.
+site_description: Interactive BattMo-first documentation for the graphite/LNMO IMP5-70-120-H0B dataset and publication figures.
 docs_dir: docs
 site_dir: site
 use_directory_urls: false

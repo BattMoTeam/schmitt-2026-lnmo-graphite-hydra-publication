@@ -5,6 +5,7 @@ import shutil
 from pathlib import Path
 
 from plotly.offline import get_plotlyjs
+from publication_names import PUBLICATION_BATTMO_PATH, PUBLICATION_BPX_PATH
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -76,7 +77,7 @@ def main() -> None:
             ROOT
             / "figures"
             / "publication"
-            / "INP5-70-120-H0B_graphite-lnmo_schmitt-2026_battmo-vs-experiment-summary.json",
+            / "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_battmo-vs-experiment-summary.json",
             "battmo-vs-experiment-summary.json",
         ),
         "figure12": prepare_json_data(
@@ -138,7 +139,7 @@ def main() -> None:
                 ROOT
                 / "figures"
                 / "publication"
-                / "INP5-70-120-H0B_graphite-lnmo_schmitt-2026_battmo-vs-experiment.png",
+                / "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_battmo-vs-experiment.png",
                 IMAGES_DIR / "publication" / "battmo-vs-experiment.png",
             ),
         },
@@ -170,12 +171,30 @@ def main() -> None:
 
     fair_documents = [
         {
+            "label": "BattINFO optimization JSON",
+            "description": "Canonical BattINFO-style battery-cell descriptor for the optimization parameterization.",
+            **prepare_text_data(
+                "fair_optimization_json",
+                ROOT / "linked-data" / "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.json",
+                "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.json",
+            ),
+        },
+        {
             "label": "Linked-data optimization JSON-LD",
-            "description": "Semantic-web description of the optimization and calibration metadata.",
+            "description": "Nested JSON-LD export of the BattINFO cell descriptor with legacy BattMo model-term links preserved via dual typing.",
             **prepare_text_data(
                 "fair_optimization_jsonld",
-                ROOT / "linked-data" / "INP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.jsonld",
-                "INP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.jsonld",
+                ROOT / "linked-data" / "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.jsonld",
+                "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.jsonld",
+            ),
+        },
+        {
+            "label": "Merged BattMo validation parameters",
+            "description": "Single-file BattMo JSON containing the final calibrated parameterization plus the 3D cell geometry used for validation.",
+            **prepare_text_data(
+                "fair_battmo_validation_parameters",
+                PUBLICATION_BATTMO_PATH,
+                PUBLICATION_BATTMO_PATH.name,
             ),
         },
         {
@@ -183,8 +202,8 @@ def main() -> None:
             "description": "Publication-facing BPX export of the validation parameter set.",
             **prepare_text_data(
                 "fair_bpx",
-                ROOT / "parameters" / "INP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.bpx.json",
-                "INP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.bpx.json",
+                PUBLICATION_BPX_PATH,
+                PUBLICATION_BPX_PATH.name,
             ),
         },
         {

@@ -3,7 +3,7 @@
     "validation_cases": 5,
     "publication_figures": 3,
     "supporting_dashboards": 10,
-    "fair_documents": 6
+    "fair_documents": 8
   },
   "vendor": {
     "plotly_bundle": "assets/vendor/plotly.min.js"
@@ -121,17 +121,31 @@
   ],
   "fair_documents": [
     {
+      "label": "BattINFO optimization JSON",
+      "description": "Canonical BattINFO-style battery-cell descriptor for the optimization parameterization.",
+      "path": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.json",
+      "script": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.js",
+      "data_key": "fair_optimization_json"
+    },
+    {
       "label": "Linked-data optimization JSON-LD",
-      "description": "Semantic-web description of the optimization and calibration metadata.",
-      "path": "assets/data/INP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.jsonld",
-      "script": "assets/data/INP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.js",
+      "description": "Nested JSON-LD export of the BattINFO cell descriptor with legacy BattMo model-term links preserved via dual typing.",
+      "path": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.jsonld",
+      "script": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.js",
       "data_key": "fair_optimization_jsonld"
+    },
+    {
+      "label": "Merged BattMo validation parameters",
+      "description": "Single-file BattMo JSON containing the final calibrated parameterization plus the 3D cell geometry used for validation.",
+      "path": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.json",
+      "script": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.js",
+      "data_key": "fair_battmo_validation_parameters"
     },
     {
       "label": "Publication BPX",
       "description": "Publication-facing BPX export of the validation parameter set.",
-      "path": "assets/data/INP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.bpx.json",
-      "script": "assets/data/INP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.bpx.js",
+      "path": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.bpx.json",
+      "script": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.bpx.js",
       "data_key": "fair_bpx"
     },
     {

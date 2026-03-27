@@ -2,7 +2,7 @@
 <p class="eyebrow">BattMo publication explorer</p>
 <h1>Schmitt 2026 Data Explorer</h1>
 
-<p>Interactive access to the validation curves, publication figures, supporting runs, and FAIR data for the `INP5-70-120-H0B` graphite/LNMO cell.</p>
+<p>Interactive access to the validation curves, publication figures, supporting runs, and FAIR data for the `IMP5-70-120-H0B` graphite/LNMO cell.</p>
 
 <ul class="docs-link-list">
   <li><a href="validation-explorer.html">Validation explorer</a></li>
