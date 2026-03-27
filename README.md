@@ -23,6 +23,8 @@ The repository demonstrates the P2D model calibration workflow described in the 
 
 ## FAIR Data and Interoperability
 
+The data is available at https://doi.org/10.5281/zenodo.18256663 .
+
 This repository includes FAIR-data exports alongside the primary BattMo workflow.
 
 The BattMo JSON files are the canonical model inputs for the published workflow. The JSON-LD and BPX files are included to support machine readability and interoperability with PyBaMM and BattMo.
