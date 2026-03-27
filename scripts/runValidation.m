@@ -23,7 +23,7 @@ getE = @(states) cellfun(@(s) s.(ctrl).E, states);
 %% Fetch experimental data
 
 % Original data
-datafilename = fullfile(getHydra0Dir(), 'rawData', 'TE_1473.mat');
+datafilename = fullfile(getHydra0Dir(), 'raw-data', 'TE_1473.mat');
 saveddata    = load(datafilename);
 dataraw      = saveddata.experiment;
 
@@ -85,7 +85,6 @@ hp(1) = plot(nan, nan, 'k', 'linestyle', '--');
 hp(2) = plot(nan, nan, 'k', 'linestyle', '-');
 legend(gca(), hp, {'exp', 'P2D'});
 
-%legtxt = arrayfun(@(r) {sprintf('%1.2gC', r)}, rates);
 legtxt = cell(1, numel(rates));
 for k = 1:numel(rates)
     legtxt{k} = sprintf('%1.2gC RMSE=%2.1f mV', rates(k), RMSE(k)/milli);
@@ -101,7 +100,7 @@ end
 
 
 %{
-  Copyright 2021-2024 SINTEF Industry, Sustainable Energy Technology
+  Copyright 2021-2026 SINTEF Industry, Sustainable Energy Technology
   and SINTEF Digital, Mathematics & Cybernetics.
 
   This file is part of The Battery Modeling Toolbox BattMo

@@ -112,11 +112,6 @@ classdef ParamSetter
                 vf = model.(elyte).volumeFraction;
                 model.(elyte).effectiveThermalConductivity = vf .^ bg .* model.(elyte).thermalConductivity;
 
-            end
-
-
-            if model.use_thermal
-
                 G = model.G;
                 nc = G.getNumberOfCells();
 
@@ -225,7 +220,7 @@ end
 
 
 %{
-  Copyright 2021-2024 SINTEF Industry, Sustainable Energy Technology
+  Copyright 2021-2026 SINTEF Industry, Sustainable Energy Technology
   and SINTEF Digital, Mathematics & Cybernetics.
 
   This file is part of The Battery Modeling Toolbox BattMo

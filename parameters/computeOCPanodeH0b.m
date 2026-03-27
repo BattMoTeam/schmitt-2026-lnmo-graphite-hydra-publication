@@ -1,4 +1,4 @@
-function [OCP, dUdT] = computeOCPanodeH0b(c, ~, cmax)
+function [OCP, dUdT] = computeOCPanodeH0b(stoc)
 
     graphite_ds = [
         0                   1.501954065265600
@@ -45,7 +45,6 @@ function [OCP, dUdT] = computeOCPanodeH0b(c, ~, cmax)
         1.000000000000000   0.017163082765764
                   ];
 
-    stoc = c/cmax;
     OCP = interpTable(graphite_ds(:,1), graphite_ds(:,2), stoc, 'spline', false);
     dUdT = 0;
 
@@ -53,7 +52,7 @@ end
 
 
 %{
-Copyright 2021-2024 SINTEF Industry, Sustainable Energy Technology
+Copyright 2021-2026 SINTEF Industry, Sustainable Energy Technology
 and SINTEF Digital, Mathematics & Cybernetics.
 
 This file is part of The Battery Modeling Toolbox BattMo
