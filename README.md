@@ -14,11 +14,12 @@ The repository demonstrates the P2D model calibration workflow described in the 
 
 ## Main Entry Points
 
-- Low-rate calibration: `scripts/low-rate-calibration/runEquilibriumCalibration.m`
-- High-rate calibration: `scripts/high-rate-calibration/runHighRateCalibration.m`
-- Validation: `scripts/runValidation.m`
-- Generate all figures in the paper: `scripts/exportPublicationFigures.m`
-- Generate interactive documentation: `run-publication.ps1`
+- Full MATLAB-side publication reproduction: `runReproduction.m`
+- Optional Python-side validation and BPX/PyBaMM checks: `run-validation.ps1`
+- Low-rate calibration only: `scripts/low-rate-calibration/runEquilibriumCalibration.m`
+- High-rate calibration only: `scripts/high-rate-calibration/runHighRateCalibration.m`
+- Validation plot only: `scripts/runValidation.m`
+- Figure export only: `scripts/exportPublicationFigures.m`
 
 
 ## FAIR Data and Interoperability
@@ -49,20 +50,44 @@ Accordingly:
 
 See also
 ```powershell
-run-publication.ps1 -IncludeBpx
+.\run-validation.ps1 -IncludeBpx
 ```
 
+
+## Reproducibility Entry Points
+
+The repository now exposes one top-level MATLAB entry point for the full paper workflow plus optional narrower entry points for validation and debugging tasks.
+
+These durations are rough wall-clock estimates on a typical workstation or laptop. The high-rate calibration dominates runtime and can vary substantially with MATLAB release, CPU, and BattMo setup.
+
+| Entry point | What it does | Typical time |
+| --- | --- | --- |
+| `runReproduction` | Runs the full MATLAB-side publication workflow: low-rate calibration, high-rate calibration, validation/reference exports, and publication figure generation. This is the main end-to-end reproduction command. | `1-3 h` |
+| `.\run-validation.ps1` | Runs the optional Python-side validation summary plot from the MATLAB-generated reference JSON. Run this after `runReproduction`. | `1-3 min` |
+| `.\run-validation.ps1 -IncludeBpx` | Runs the Python-side validation summary plot plus optional BPX/PyBaMM interoperability exports and comparison figures. | `5-15 min` |
+| `startup; run(fullfile('scripts','low-rate-calibration','runEquilibriumCalibration.m'));` | Recomputes the equilibrium calibration only. | `2-10 min` |
+| `startup; run(fullfile('scripts','high-rate-calibration','runHighRateCalibration.m'));` | Recomputes the high-rate calibration from the equilibrium-calibrated parameters. | `45-180 min` |
+| `python scripts\prepare_docs_site.py` and `python -m mkdocs build --strict` | Rebuilds the documentation site only. | `1-3 min` |
 
 ## Documentation
 
-To generate the interactive documentation, run from the repository root:
+To generate the publication assets that feed the documentation, first run from MATLAB:
 
-```powershell
-.\run-publication.ps1
+```matlab
+runReproduction
 ```
-or
+
+Then rebuild the documentation site with:
 ```powershell
 python -m pip install -r requirements-docs.txt
+python scripts\prepare_docs_site.py
+python -m mkdocs build --strict
+```
+
+For live local preview, run:
+```powershell
+python -m pip install -r requirements-docs.txt
+python scripts\prepare_docs_site.py
 python -m mkdocs serve
 ```
 
