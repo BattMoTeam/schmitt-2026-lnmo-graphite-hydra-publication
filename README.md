@@ -14,25 +14,16 @@ The repository demonstrates the P2D model calibration workflow described in the 
 
 ## Entry Points
 
-After installing and configuring BattMO as described above, the main entry point is to run the full MATLAB-side publication reproduction script: `runReproduction.m`  
+After installing and configuring BattMO as described above, the main entry point is to run the full MATLAB-side publication reproduction script (typical duration: 1-3 hours): `runReproduction.m`  
 
-The full reproduction run takes between 1-3 hours, depending on hardware. Optionally, the components can also be run individually using the following scripts:
-- Low-rate calibration only: `scripts/low-rate-calibration/runEquilibriumCalibration.m`
-- High-rate calibration only: `scripts/high-rate-calibration/runHighRateCalibration.m`
-- Validation plot only: `scripts/runValidation.m`
-- Figure export only: `scripts/exportPublicationFigures.m`
-- Python-side validation and BPX checks: `run-validation.ps1`
+Optionally, the components can also be run individually using the following scripts:
+- Low-rate calibration only (typical duration: 2 - 10 min): `scripts/low-rate-calibration/runEquilibriumCalibration.m`
+- High-rate calibration only (typical duration: 45 - 180 min): `scripts/high-rate-calibration/runHighRateCalibration.m`
+- Validation plot only (typical duration: h): `scripts/runValidation.m`
+- Figure export only (typical duration: h): `scripts/exportPublicationFigures.m`
+- Python-side validation and BPX checks (typical duration: h): `run-validation.ps1`
 
 The table below provides an overview of the various entry points with estimates for typical run time. 
-
-| Entry point | What it does | Typical time |
-| --- | --- | --- |
-| `runReproduction` | Runs the full MATLAB-side publication workflow: low-rate calibration, high-rate calibration, validation/reference exports, and publication figure generation. This is the main end-to-end reproduction command. | `1-3 h` |
-| `.\run-validation.ps1` | Runs the optional Python-side validation summary plot from the MATLAB-generated reference JSON. Run this after `runReproduction`. | `1-3 min` |
-| `.\run-validation.ps1 -IncludeBpx` | Runs the Python-side validation summary plot plus optional BPX/PyBaMM interoperability exports and comparison figures. | `5-15 min` |
-| `startup; run(fullfile('scripts','low-rate-calibration','runEquilibriumCalibration.m'));` | Recomputes the equilibrium calibration only. | `2-10 min` |
-| `startup; run(fullfile('scripts','high-rate-calibration','runHighRateCalibration.m'));` | Recomputes the high-rate calibration from the equilibrium-calibrated parameters. | `45-180 min` |
-| `python scripts\prepare_docs_site.py` and `python -m mkdocs build --strict` | Rebuilds the documentation site only. | `1-3 min` |
 
 ## FAIR Data and Interoperability
 
