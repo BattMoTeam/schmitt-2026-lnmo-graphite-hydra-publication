@@ -69,33 +69,6 @@ These durations are rough wall-clock estimates on a typical workstation or lapto
 | `startup; run(fullfile('scripts','high-rate-calibration','runHighRateCalibration.m'));` | Recomputes the high-rate calibration from the equilibrium-calibrated parameters. | `45-180 min` |
 | `python scripts\prepare_docs_site.py` and `python -m mkdocs build --strict` | Rebuilds the documentation site only. | `1-3 min` |
 
-## Documentation
-
-To generate the publication assets that feed the documentation, first run from MATLAB:
-
-```matlab
-runReproduction
-```
-
-Then rebuild the documentation site with:
-```powershell
-python -m pip install -r requirements-docs.txt
-python scripts\prepare_docs_site.py
-python -m mkdocs build --strict
-```
-
-For live local preview, run:
-```powershell
-python -m pip install -r requirements-docs.txt
-python scripts\prepare_docs_site.py
-python -m mkdocs serve
-```
-
-The repository includes a GitHub Actions workflow at `.github/workflows/github-pages.yml` that builds the MkDocs site on pushes to `main` and deploys the generated `site/` output to the `gh-pages` branch.
-
-For GitHub Pages to publish that branch, set the repository Pages source to `Deploy from a branch`, branch `gh-pages`, folder `/ (root)`.
-
-
 ## Citation
 
 Citation metadata is in [`CITATION.cff`](./CITATION.cff). The accompanying paper is available at `https://arxiv.org/abs/2601.10507`.
