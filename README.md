@@ -66,6 +66,10 @@ python -m pip install -r requirements-docs.txt
 python -m mkdocs serve
 ```
 
+The repository includes a GitHub Actions workflow at `.github/workflows/github-pages.yml` that builds the MkDocs site on pushes to `main` and deploys the generated `site/` output to the `gh-pages` branch.
+
+For GitHub Pages to publish that branch, set the repository Pages source to `Deploy from a branch`, branch `gh-pages`, folder `/ (root)`.
+
 
 ## Citation
 
