@@ -3,6 +3,11 @@
 clear all
 close all
 
+% Keep plotting available for file export when running without a desktop or X display.
+if ~usejava('desktop')
+    set(groot, 'DefaultFigureVisible', 'off');
+end
+
 diaryname = sprintf('_diary-%s-%s.txt', mfilename, datetime('now', 'Format', 'yyyyMMdd-HHmmss'));
 diary(diaryname);
 
@@ -19,9 +24,9 @@ sep   = 'Separator';
 % mrstDebug(0);
 
 doplot = true;
-debug = false;
-hessian = false;
-dosave = false;
+debug = true;
+hessian = true;
+dosave = true;
 gradSteps = [1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7];
 hessianSteps = [1e-5, 1e-6, 1e-7, 1e-8, 1e-9];
 
@@ -46,8 +51,9 @@ expdata = struct('time', dataraw.time{k} * hour, ...
 filename     = fullfile(getHydra0Dir(), 'parameters', 'equilibrium-calibration-parameters.json');
 jsonstructEC = parseBattmoJson(filename);
 
-shortnames = {'ne_vsa', 'pe_vsa', 'ne_bg', 'pe_bg', 'ne_D', 'pe_D', 'elyte_bg_ne', 'elyte_bg_pe', 'elyte_bg_sep'};
+% shortnames = {'ne_vsa', 'pe_vsa', 'ne_bg', 'pe_bg', 'ne_D', 'pe_D', 'elyte_bg_ne', 'elyte_bg_pe', 'elyte_bg_sep'};
 % shortnames = {'pe_vsa', 'ne_D', 'pe_D', 'elyte_bgfactor'};
+shortnames = {'pe_vsa', 'ne_D', 'pe_D', 'elyte_bg_ne', 'elyte_bg_pe', 'elyte_bg_sep'};
 disp('shortnames:');
 printer(shortnames);
 useRegionBruggemanCoefficients = any(contains(shortnames, 'elyte_bg'));
@@ -157,8 +163,8 @@ callbackfunc = @(history, it) callbackplot(history, it, simulatorSetup, HRC.getP
                                            'objScaling' , scaling, ...
                                            'doplot'     , doplot);
 
-gradTol = 1e-5;
-objChangeTol = 1e-13;
+gradTol = 1e-4;
+objChangeTol = -inf; %1e-13;
 maxit = 500;
 [vopt, Xopt, history] = unitBoxBFGS(X0, objective, ...
                                     'gradTol'         , gradTol     , ...
@@ -277,7 +283,7 @@ fprintf('RMSE after calibration: %g mV\n', RMSE/milli);
 if hessian
 
     % history.hess contains the inverse approximate Hessian in scaled coordinates
-    invHscaled = history.hess{end};
+    invHscaled = full(history.hess{end});
     hessianfdpertsize = 1e-6; % deduced from debug
 
     Hscaled = calculateBFGSHessian(invHscaled, HRC.shortnames);
@@ -357,6 +363,20 @@ sensitivitySummary = table(HRC.shortnames(:), initialParams(:), finalParams(:), 
                            {'Shortname', 'InitialValue', 'FinalValue', 'Sensitivity', 'InitialGroup'});
 fprintf('\nInitial sensitivity classification and calibration results:\n');
 disp(sensitivitySummary);
+
+% Save the final state of every open figure, including callback and debug plots.
+if dosave
+    [diaryFolder, diaryBaseName] = fileparts(diaryname);
+    figureFolder = fullfile(diaryFolder, diaryBaseName);
+    drawnow;
+    figureHandles = findall(groot, 'Type', 'figure');
+    for figureIndex = 1:numel(figureHandles)
+        figureHandle = figureHandles(figureIndex);
+        figureBaseName = sprintf('figure-%03d', figureHandle.Number);
+        saveFigureSet(figureHandle, fullfile(figureFolder, figureBaseName));
+    end
+    fprintf('Saved %d figures to %s\n', numel(figureHandles), figureFolder);
+end
 
 diary off;
 

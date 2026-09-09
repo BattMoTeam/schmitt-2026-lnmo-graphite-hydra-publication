@@ -3,10 +3,10 @@
     "Coating": {
       "ActiveMaterial": {
         "Interface": {
-          "volumetricSurfaceArea": 68361.851693329678
+          "volumetricSurfaceArea": 222315.87023046429
         },
         "SolidDiffusion": {
-          "referenceDiffusionCoefficient": 3.6961871938711009E-14
+          "referenceDiffusionCoefficient": 3.4596121178849071E-14
         }
       }
     }
@@ -15,12 +15,16 @@
     "Coating": {
       "ActiveMaterial": {
         "SolidDiffusion": {
-          "referenceDiffusionCoefficient": 1.5113405596383825E-13
+          "referenceDiffusionCoefficient": 1.4273469109696709E-13
         }
       }
     }
   },
   "Electrolyte": {
-    "bgfactor": 0.31468949643749744
+    "regionBruggemanCoefficients": {
+      "NegativeElectrode": 1.8618752100866052,
+      "PositiveElectrode": 1.6835959564269269,
+      "Separator": 4.5319128549024663
+    }
   }
 }
