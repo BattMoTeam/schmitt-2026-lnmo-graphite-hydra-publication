@@ -303,6 +303,7 @@ printer(jsonstructHRC);
 % = poro^-bman.
 
 model = outputOpt.model;
+tortuosity = @(vf, bman) vf.^(-bman);
 if any(strcmp(HRC.shortnames(), 'elyte_bgfactor'))
     rbc = model.(elyte).regionBruggemanCoefficients;
     bgfactor = model.(elyte).bgfactor;
