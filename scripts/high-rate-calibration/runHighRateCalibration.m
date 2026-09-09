@@ -330,18 +330,23 @@ if any(strcmp(HRC.shortnames(), 'elyte_bgfactor'))
     printer(tau);
 elseif any(strcmp(HRC.shortnames(), 'elyte_bgfactorKappa')) && any(strcmp(HRC.shortnames(), 'elyte_bgfactorD'))
     rbc = model.(elyte).regionBruggemanCoefficients;
-elseif any(strcmp(HRC.shortnames(), 'elyte_bg_ne'))
+else
+    keyboard;
+end
+if any(strcmp(HRC.shortnames(), 'elyte_bg_ne'))
     poro = 1 - model.(ne).(co).volumeFraction;
     bg = model.(elyte).regionBruggemanCoefficients.(ne);
     tau_ne = tortuosity(poro, bg);
     fprintf('tau ne %g\n', tau_ne);
-elseif any(strcmp(HRC.shortnames(), 'elyte_bg_pe'))
+end
+if any(strcmp(HRC.shortnames(), 'elyte_bg_pe'))
     poro = 1 - model.(pe).(co).volumeFraction;
     bg = model.(elyte).regionBruggemanCoefficients.(pe);
     tau_pe = tortuosity(poro, bg);
     fprintf('tau pe %g\n', tau_pe);
-elseif any(strcmp(HRC.shortnames(), 'elyte_bg_sep'))
-    poro = model.(sep).poro;
+end
+if any(strcmp(HRC.shortnames(), 'elyte_bg_sep'))
+    poro = model.(sep).porosity;
     bg = model.(elyte).regionBruggemanCoefficients.(sep);
     tau_sep = tortuosity(poro, bg);
     fprintf('tau sep %g\n', tau_sep);
