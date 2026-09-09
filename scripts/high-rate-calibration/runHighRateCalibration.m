@@ -328,10 +328,6 @@ if any(strcmp(HRC.shortnames(), 'elyte_bgfactor'))
     tau.(sep) = tortuosity(model.(sep).porosity, effbmen.(sep));
     disp('Derived tortuosities');
     printer(tau);
-elseif any(strcmp(HRC.shortnames(), 'elyte_bgfactorKappa')) && any(strcmp(HRC.shortnames(), 'elyte_bgfactorD'))
-    rbc = model.(elyte).regionBruggemanCoefficients;
-else
-    keyboard;
 end
 if any(strcmp(HRC.shortnames(), 'elyte_bg_ne'))
     poro = 1 - model.(ne).(co).volumeFraction;
