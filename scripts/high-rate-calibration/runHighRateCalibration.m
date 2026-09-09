@@ -316,7 +316,6 @@ if any(strcmp(HRC.shortnames(), 'elyte_bgfactor'))
     printer(effbmen);
 
     % Convert to tortuosities
-    tortuosity = @(vf, bman) vf.^(-bman);
     tau = struct();
     tau.(ne) = tortuosity(1-model.(ne).(co).volumeFraction, effbmen.(ne));
     tau.(pe) = tortuosity(1-model.(pe).(co).volumeFraction, effbmen.(pe));
@@ -325,6 +324,21 @@ if any(strcmp(HRC.shortnames(), 'elyte_bgfactor'))
     printer(tau);
 elseif any(strcmp(HRC.shortnames(), 'elyte_bgfactorKappa')) && any(strcmp(HRC.shortnames(), 'elyte_bgfactorD'))
     rbc = model.(elyte).regionBruggemanCoefficients;
+elseif any(strcmp(HRC.shortnames(), 'elyte_bg_ne'))
+    poro = 1 - model.(ne).(co).volumeFraction;
+    bg = model.(elyte).regionBruggemanCoefficients.(ne);
+    tau_ne = tortuosity(poro, bg);
+    fprintf('tau ne %g\n', tau_ne);
+elseif any(strcmp(HRC.shortnames(), 'elyte_bg_pe'))
+    poro = 1 - model.(pe).(co).volumeFraction;
+    bg = model.(elyte).regionBruggemanCoefficients.(pe);
+    tau_pe = tortuosity(poro, bg);
+    fprintf('tau pe %g\n', tau_pe);
+elseif any(strcmp(HRC.shortnames(), 'elyte_bg_sep'))
+    poro = model.(sep).poro;
+    bg = model.(elyte).regionBruggemanCoefficients.(sep);
+    tau_sep = tortuosity(poro, bg);
+    fprintf('tau sep %g\n', tau_sep);
 end
 
 effCond = struct(pe, outputOpt.model.(pe).(co).effectiveElectronicConductivity, ...
