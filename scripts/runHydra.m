@@ -68,7 +68,14 @@ function output = runHydra(input, varargin)
     if input.useRegionBruggemanCoefficients
         jsonstruct.(elyte).useRegionBruggemanCoefficients = true;
 
-        bgFromTau = @(poro, tau) -log(tau) / log(poro);
+        % Landesfeind: tau = poro^-bg:
+        % bgFromTau = @(poro, tau) -log(tau) / log(poro);
+
+        % Other literature
+        % https://iopscience.iop.org/article/10.1149/2.0111502jes
+        % https://www.sciencedirect.com/science/article/pii/S2211339816300119?via%3Dihub
+        % tau = poro^(1-bg): log(tau) = (1-bg) log(poro)
+        bgFromTau = @(poro, tau) 1 - log(tau) / log(poro);
 
         % Set if not already set (via jsonstructHRC)
         if ~isfield(jsonstruct.(elyte), rbc)
@@ -89,6 +96,9 @@ function output = runHydra(input, varargin)
             tauref = 4.2;
             jsonstruct.(elyte).regionBruggemanCoefficients.(sep) = bgFromTau(poro, tauref);
         end
+        printer = @(s) disp(jsonencode(s, 'PrettyPrint', true));
+        printer(jsonstruct.(elyte).regionBruggemanCoefficients);
+        % keyboard;
     end
 
     % Load geometry

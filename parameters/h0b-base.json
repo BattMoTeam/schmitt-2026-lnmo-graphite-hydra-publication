@@ -79,7 +79,7 @@
       },
       "N": 10,
       "thickness": 5.65e-05,
-      "bruggemanCoefficient": 2.2225783202970613,
+      "bruggemanCoefficient": 2.3570827297901848,
       "electronicConductivity": 62,
       "effectiveElectronicConductivity": 62,
       "volumeFraction": 0.61,
@@ -142,7 +142,7 @@
       },
       "N": 10,
       "thickness": 7.65e-05,
-      "bruggemanCoefficient": 2.9872983233425821,
+      "bruggemanCoefficient": 1.9818678700163161,
       "electronicConductivity": 18,
       "effectiveElectronicConductivity": 18,
       "volumeFraction": 0.66,
@@ -168,7 +168,7 @@
     }
   },
   "Separator": {
-    "bruggemanCoefficient": 2.194565592337268,
+    "bruggemanCoefficient": 2.9552381408013648,
     "density": 946,
     "porosity": 0.48,
     "thickness": 2.5e-05,
