@@ -310,7 +310,7 @@ printer(jsonstructHRC);
 
 model = outputOpt.model;
 tortuosityLandesfeind = @(vf, bman) vf.^(-bman);
-tortuosity = @(vf, bman) poro.^(1-bman);
+tortuosity = @(vf, bman) vf.^(1-bman);
 if any(strcmp(HRC.shortnames(), 'elyte_bgfactor'))
     rbc = model.(elyte).regionBruggemanCoefficients;
     bgfactor = model.(elyte).bgfactor;
