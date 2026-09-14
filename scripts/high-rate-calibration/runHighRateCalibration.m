@@ -3,10 +3,10 @@
 clear all
 close all
 
-% Keep plotting available for file export when running without a desktop or X display.
-if ~usejava('desktop')
-    set(groot, 'DefaultFigureVisible', 'off');
-end
+% % Keep plotting available for file export when running without a desktop or X display.
+% if ~usejava('desktop')
+%     set(groot, 'DefaultFigureVisible', 'off');
+% end
 
 diaryname = sprintf('_diary-%s-%s.txt', mfilename, datetime('now', 'Format', 'yyyyMMdd-HHmmss'));
 diary(diaryname);
@@ -51,14 +51,14 @@ expdata = struct('time', dataraw.time{k} * hour, ...
 filename     = fullfile(getHydra0Dir(), 'parameters', 'equilibrium-calibration-parameters.json');
 jsonstructEC = parseBattmoJson(filename);
 
-% shortnames = {'ne_vsa', 'pe_vsa', 'ne_bg', 'pe_bg', 'ne_D', 'pe_D', 'elyte_bg_ne', 'elyte_bg_pe', 'elyte_bg_sep'};
+shortnames = {'ne_vsa', 'pe_vsa', 'ne_bg', 'pe_bg', 'ne_D', 'pe_D', 'elyte_bg_ne', 'elyte_bg_pe', 'elyte_bg_sep'};
 % shortnames = {'pe_vsa', 'ne_D', 'pe_D', 'elyte_bgfactor'};
-shortnames = {'pe_vsa', 'ne_D', 'pe_D', 'elyte_bg_ne', 'elyte_bg_pe', 'elyte_bg_sep'};
+% shortnames = {'pe_vsa', 'ne_D', 'pe_D', 'elyte_bg_ne', 'elyte_bg_pe', 'elyte_bg_sep'};
 disp('shortnames:');
 printer(shortnames);
 useRegionBruggemanCoefficients = any(contains(shortnames, 'elyte_bg'));
 
-numTimesteps = 400; %100; % 400
+numTimesteps = 100% 400; %100; % 400
 input0 = struct('I'                             , expdata.I, ...
                 'totalTime'                     , expdata.time(end)             , ...
                 'numTimesteps'                  , numTimesteps                  , ...
@@ -137,6 +137,15 @@ senstbl = table(HRC.shortnames(:), abs(sensitivityReport.sensitivities), sensiti
 senstbl = senstbl(sortIdx, :);
 disp(senstbl);
 % return
+    % Plot log sensitivities
+    figure;
+    bar(log10(abs(senstbl.Sensitivity)));
+    set(gca, 'XTick', 1:numel(senstbl.Sensitivity), ...
+             'XTickLabel', strrep(senstbl.Parameter, '_', '\_'), ...
+             'XTickLabelRotation', 45);
+    ylabel('log_{10}(Sensitivity)');
+    title('Log Sensitivities of Parameters');
+    return % For checking initial sensitivities
 
 if debug
     % The least squares function evaluated at the experimental values
