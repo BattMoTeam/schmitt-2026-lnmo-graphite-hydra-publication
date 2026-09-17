@@ -51,14 +51,13 @@ expdata = struct('time', dataraw.time{k} * hour, ...
 filename     = fullfile(getHydra0Dir(), 'parameters', 'equilibrium-calibration-parameters.json');
 jsonstructEC = parseBattmoJson(filename);
 
-shortnames = {'ne_vsa', 'pe_vsa', 'ne_bg', 'pe_bg', 'ne_D', 'pe_D', 'elyte_bg_ne', 'elyte_bg_pe', 'elyte_bg_sep'};
-% shortnames = {'pe_vsa', 'ne_D', 'pe_D', 'elyte_bgfactor'};
-% shortnames = {'pe_vsa', 'ne_D', 'pe_D', 'elyte_bg_ne', 'elyte_bg_pe', 'elyte_bg_sep'};
+% shortnames = {'ne_vsa', 'pe_vsa', 'ne_bg', 'pe_bg', 'ne_D', 'pe_D', 'elyte_bg_ne', 'elyte_bg_pe', 'elyte_bg_sep'};
+shortnames = {'pe_vsa', 'ne_D', 'pe_D', 'elyte_bg_ne', 'elyte_bg_pe', 'elyte_bg_sep'};
 disp('shortnames:');
 printer(shortnames);
 useRegionBruggemanCoefficients = any(contains(shortnames, 'elyte_bg'));
 
-numTimesteps = 400% 400; %100; % 400
+numTimesteps = 400; %100; % 400
 input0 = struct('I'                             , expdata.I, ...
                 'totalTime'                     , expdata.time(end)             , ...
                 'numTimesteps'                  , numTimesteps                  , ...
@@ -131,29 +130,32 @@ objective = @(p, varargin) evalObjectiveBattmo(p, lsq, simulatorSetup, HRC.getPa
 X0 = sensitivityReport.scaledParameters;
 initialParams = sensitivityReport.parameterValues;
 
-% Plot log scaled and unscaled sensitivities
-figure;
-bar(log10(abs(senstbl.scaledSensitivity)));
-set(gca, 'XTick', 1:numel(senstbl.scaledSensitivity), ...
-         'XTickLabel', strrep(senstbl.Parameter, '_', '\_'), ...
-         'XTickLabelRotation', 45);
-ylabel('log_{10}(|dJ/dp_{sc}|), p_{sc} = scaled parameter');
-title('Scaled Parameter Sensitivities');
-figure;
-bar(log10(abs(senstbl.unscaledSensitivity)));
-set(gca, 'XTick', 1:numel(senstbl.unscaledSensitivity), ...
-         'XTickLabel', strrep(senstbl.Parameter, '_', '\_'), ...
-         'XTickLabelRotation', 45);
-ylabel('log_{10}(|dJ/dp|), p = unscaled parameter');
-title('Unscaled Parameter Sensitivities');
-figure;
-bar(log10(abs(senstbl.relativeSensitivity)));
-set(gca, 'XTick', 1:numel(senstbl.relativeSensitivity), ...
-         'XTickLabel', strrep(senstbl.Parameter, '_', '\_'), ...
-         'XTickLabelRotation', 45);
-ylabel('log_{10}(|p{\cdot}dJ/dp|)');
-title('Relative Parameter Sensitivities');
-return % For checking initial sensitivities
+plotSens = false;
+if plotSens
+    % Plot log scaled and unscaled sensitivities
+    figure;
+    bar(log10(abs(senstbl.scaledSensitivity)));
+    set(gca, 'XTick', 1:numel(senstbl.scaledSensitivity), ...
+             'XTickLabel', strrep(senstbl.Parameter, '_', '\_'), ...
+             'XTickLabelRotation', 45);
+    ylabel('log_{10}(|dJ/dp_{sc}|), p_{sc} = scaled parameter');
+    title('Scaled Parameter Sensitivities');
+    figure;
+    bar(log10(abs(senstbl.unscaledSensitivity)));
+    set(gca, 'XTick', 1:numel(senstbl.unscaledSensitivity), ...
+             'XTickLabel', strrep(senstbl.Parameter, '_', '\_'), ...
+             'XTickLabelRotation', 45);
+    ylabel('log_{10}(|dJ/dp|), p = unscaled parameter');
+    title('Unscaled Parameter Sensitivities');
+    figure;
+    bar(log10(abs(senstbl.relativeSensitivity)));
+    set(gca, 'XTick', 1:numel(senstbl.relativeSensitivity), ...
+             'XTickLabel', strrep(senstbl.Parameter, '_', '\_'), ...
+             'XTickLabelRotation', 45);
+    ylabel('log_{10}(|p{\cdot}dJ/dp|)');
+    title('Relative Parameter Sensitivities');
+    return % For checking initial sensitivities
+end
 
 if debug
     % The least squares function evaluated at the experimental values
@@ -309,7 +311,7 @@ if hessian
         compareHessians(Hscaled, HfdComparison, HfdReport, Xopt, HRC.shortnames);
     end
     [HfdScaled, hessianReport] = calculateFDHessian(Xopt, objective, ...
-        HRC.shortnames, hessianfdpertsize);
+                                                    HRC.shortnames, hessianfdpertsize);
 
     plotHessianEigenvectors(Hscaled, HRC.shortnames, 'BFGS', 'dosave', dosave);
     plotHessianEigenvectors(HfdScaled, HRC.shortnames, 'FD', 'dosave', dosave);
@@ -413,8 +415,8 @@ if hessian
     end
     hessianFile = fullfile(resultFolder, 'hessian.mat');
     save(hessianFile, 'Hscaled', 'HfdScaled', 'invHscaled', 'hessianReport', ...
-        'Xopt', 'vopt', 'scaling', 'HRC', 'simulatorSetup', 'statesExp', 'expdata', ...
-        'input0', 'jsonstructHRC', 'diaryname', 'reasonStr', '-v7.3');
+         'Xopt', 'vopt', 'scaling', 'HRC', 'simulatorSetup', 'statesExp', 'expdata', ...
+         'input0', 'jsonstructHRC', 'diaryname', 'reasonStr', '-v7.3');
     fprintf('Saved Hessians and optimum simulation setup to %s\n', hessianFile);
 end
 
