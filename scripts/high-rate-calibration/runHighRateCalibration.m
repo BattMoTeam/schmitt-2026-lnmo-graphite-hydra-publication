@@ -58,7 +58,7 @@ disp('shortnames:');
 printer(shortnames);
 useRegionBruggemanCoefficients = any(contains(shortnames, 'elyte_bg'));
 
-numTimesteps = 100% 400; %100; % 400
+numTimesteps = 400% 400; %100; % 400
 input0 = struct('I'                             , expdata.I, ...
                 'totalTime'                     , expdata.time(end)             , ...
                 'numTimesteps'                  , numTimesteps                  , ...
@@ -127,25 +127,33 @@ objective = @(p, varargin) evalObjectiveBattmo(p, lsq, simulatorSetup, HRC.getPa
                                                'objScaling', scaling, varargin{:});
 
 % Compute and classify sensitivities at the initial parameter values.
-X0 = getScaledParameterVector(simulatorSetup, HRC.getParams());
-initialParams = cellfun(@(parameter) parameter.getParameterValue(simulatorSetup), HRC.getParams());
-sensitivityReport = computeSensitivities(X0, objective, HRC.shortnames, scaling);
-senstbl = table(HRC.shortnames(:), abs(sensitivityReport.sensitivities), sensitivityReport.initialGroup(:), ...
-                'VariableNames', {'Parameter', 'Sensitivity', 'Initial Group'});
-% Sort by sensitivities
-[~, sortIdx] = sort(abs(sensitivityReport.sensitivities), 'descend');
-senstbl = senstbl(sortIdx, :);
-disp(senstbl);
-% return
-    % Plot log sensitivities
-    figure;
-    bar(log10(abs(senstbl.Sensitivity)));
-    set(gca, 'XTick', 1:numel(senstbl.Sensitivity), ...
-             'XTickLabel', strrep(senstbl.Parameter, '_', '\_'), ...
-             'XTickLabelRotation', 45);
-    ylabel('log_{10}(Sensitivity)');
-    title('Log Sensitivities of Parameters');
-    return % For checking initial sensitivities
+[senstbl, sensitivityReport] = computeSensitivities(HRC, objective, scaling);
+X0 = sensitivityReport.scaledParameters;
+initialParams = sensitivityReport.parameterValues;
+
+% Plot log scaled and unscaled sensitivities
+figure;
+bar(log10(abs(senstbl.scaledSensitivity)));
+set(gca, 'XTick', 1:numel(senstbl.scaledSensitivity), ...
+         'XTickLabel', strrep(senstbl.Parameter, '_', '\_'), ...
+         'XTickLabelRotation', 45);
+ylabel('log_{10}(|dJ/dp_{sc}|), p_{sc} = scaled parameter');
+title('Scaled Parameter Sensitivities');
+figure;
+bar(log10(abs(senstbl.unscaledSensitivity)));
+set(gca, 'XTick', 1:numel(senstbl.unscaledSensitivity), ...
+         'XTickLabel', strrep(senstbl.Parameter, '_', '\_'), ...
+         'XTickLabelRotation', 45);
+ylabel('log_{10}(|dJ/dp|), p = unscaled parameter');
+title('Unscaled Parameter Sensitivities');
+figure;
+bar(log10(abs(senstbl.relativeSensitivity)));
+set(gca, 'XTick', 1:numel(senstbl.relativeSensitivity), ...
+         'XTickLabel', strrep(senstbl.Parameter, '_', '\_'), ...
+         'XTickLabelRotation', 45);
+ylabel('log_{10}(|p{\cdot}dJ/dp|)');
+title('Relative Parameter Sensitivities');
+return % For checking initial sensitivities
 
 if debug
     % The least squares function evaluated at the experimental values
@@ -300,7 +308,8 @@ if hessian
         [HfdComparison, HfdReport] = calculateFDHessian(Xopt, objective, HRC.shortnames, hessianSteps);
         compareHessians(Hscaled, HfdComparison, HfdReport, Xopt, HRC.shortnames);
     end
-    HfdScaled = calculateFDHessian(Xopt, objective, HRC.shortnames, hessianfdpertsize);
+    [HfdScaled, hessianReport] = calculateFDHessian(Xopt, objective, ...
+        HRC.shortnames, hessianfdpertsize);
 
     plotHessianEigenvectors(Hscaled, HRC.shortnames, 'BFGS', 'dosave', dosave);
     plotHessianEigenvectors(HfdScaled, HRC.shortnames, 'FD', 'dosave', dosave);
@@ -375,9 +384,9 @@ disp(reasonStr)
 % Print initial and final vals, plus sensitivities
 finalParams = cellfun(@(p) p.getParameterValue(setupOpt), HRC.getParams());
 sensitivitySummary = table(HRC.shortnames(:), initialParams(:), finalParams(:), ...
-                           sensitivityReport.absoluteSensitivities(:), sensitivityReport.initialGroup(:), ...
+                           sensitivityReport.scaledSensitivity(:), sensitivityReport.initialGroup(:), ...
                            'VariableNames', ...
-                           {'Shortname', 'InitialValue', 'FinalValue', 'Sensitivity', 'InitialGroup'});
+                           {'Shortname', 'InitialValue', 'FinalValue', 'scaledSensitivity', 'InitialGroup'});
 fprintf('\nInitial sensitivity classification and calibration results:\n');
 disp(sensitivitySummary);
 
@@ -393,6 +402,20 @@ if dosave
         saveFigureSet(figureHandle, fullfile(figureFolder, figureBaseName));
     end
     fprintf('Saved %d figures to %s\n', numel(figureHandles), figureFolder);
+end
+
+% Preserve the exact objective setup and parameter scaling for independent forward analysis.
+if hessian
+    [diaryFolder, diaryBaseName] = fileparts(diaryname);
+    resultFolder = fullfile(diaryFolder, diaryBaseName);
+    if ~isfolder(resultFolder)
+        mkdir(resultFolder);
+    end
+    hessianFile = fullfile(resultFolder, 'hessian.mat');
+    save(hessianFile, 'Hscaled', 'HfdScaled', 'invHscaled', 'hessianReport', ...
+        'Xopt', 'vopt', 'scaling', 'HRC', 'simulatorSetup', 'statesExp', 'expdata', ...
+        'input0', 'jsonstructHRC', 'diaryname', 'reasonStr', '-v7.3');
+    fprintf('Saved Hessians and optimum simulation setup to %s\n', hessianFile);
 end
 
 diary off;
