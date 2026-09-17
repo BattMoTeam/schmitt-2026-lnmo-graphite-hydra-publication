@@ -4,6 +4,7 @@ classdef HighRateCalibration
 
     properties
 
+        simulatorSetup
         params
         parameterSpecs
         shortnames
@@ -16,6 +17,7 @@ classdef HighRateCalibration
 
         function HRC = HighRateCalibration(simulatorSetup, varargin)
 
+            HRC.simulatorSetup = simulatorSetup;
             opt = struct('shortnames', []);
             opt = merge_options(opt, varargin{:});
 
@@ -98,7 +100,7 @@ classdef HighRateCalibration
             specs(end + 1) = struct( ...
                 'shortname', 'ne_vsa', ...
                 'location' , {{ne, co, am, itf, 'volumetricSurfaceArea'}}, ...
-                'boxLim'   , [1e3, 1e8], ...
+                'boxLim'   , [1e4, 1e8], ...
                 'scaling'  , 'log', ...
                 'getfun'   , @(model, ~) getVsa(model, ne), ...
                 'setfun'   , @(model, ~, v) setVsa(model, v, ne));
