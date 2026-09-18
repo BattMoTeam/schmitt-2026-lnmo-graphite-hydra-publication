@@ -28,7 +28,7 @@ Additional workflows:
 
 - Full MATLAB-side publication reproduction (typical duration: `1 - 3 h`): `runReproduction`
 - Figure export only (typical duration: `10 - 30 min`): `scripts/exportPublicationFigures.m`
-- Python-side validation summary only (typical duration: `< 1 min`; `5 - 15 min` with `-IncludeBpx`): `run-validation.ps1`
+- Python-side validation summary only (typical duration: `< 1 min`; `5 - 15 min` with `--include-bpx`): `python run-validation.py`
 
 These are rough wall-clock estimates on a typical workstation or laptop. The high-rate calibration dominates runtime and can vary substantially with MATLAB release, CPU, and BattMo setup.
 
@@ -59,8 +59,8 @@ Accordingly:
 - the cathode OCP table includes a boundary extrapolation
 
 See also
-```powershell
-.\run-validation.ps1 -IncludeBpx
+```sh
+python run-validation.py --include-bpx
 ```
 ## Citation
 
