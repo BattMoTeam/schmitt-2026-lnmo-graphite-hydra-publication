@@ -3,7 +3,9 @@
 clearvars
 close all
 
-diaryname = sprintf('_diary-%s-%s.txt', mfilename, datetime('now', 'Format', 'yyyyMMdd-HHmmss'));
+scriptDirectory = fileparts(mfilename('fullpath'));
+diaryFilename = sprintf('_diary-%s-%s.txt', mfilename, datetime('now', 'Format', 'yyyyMMdd-HHmmss'));
+diaryname = fullfile(scriptDirectory, diaryFilename);
 diary(diaryname);
 
 pe    = 'PositiveElectrode';

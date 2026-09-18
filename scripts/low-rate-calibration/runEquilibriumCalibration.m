@@ -3,7 +3,9 @@
 clearvars
 close all
 
-diary(sprintf('_diary-%s-%s.txt', mfilename, datestr(now, 'yyyymmdd-HHMMSS')));
+scriptDirectory = fileparts(mfilename('fullpath'));
+diaryFilename = sprintf('_diary-%s-%s.txt', mfilename, datestr(now, 'yyyymmdd-HHMMSS'));
+diary(fullfile(scriptDirectory, diaryFilename));
 
 mrstDebug(0);
 
@@ -112,7 +114,7 @@ ylim([3.45, 4.9])
 
 dosave = false;
 if dosave
-    exportgraphics(fig, 'cell-balancing.png', 'resolution', 300);
+    exportgraphics(fig, fullfile(scriptDirectory, 'cell-balancing.png'), 'resolution', 300);
 end
 
 RMSE = l2error(expdata.time, expdata.U, getTime(outputOpt.states), getE(outputOpt.states), 'extrap', true);

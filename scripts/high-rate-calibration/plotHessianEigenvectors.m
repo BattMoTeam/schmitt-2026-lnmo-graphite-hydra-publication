@@ -63,8 +63,9 @@ function fig = plotHessianEigenvectors(H, shortnames, casename, varargin)
 
     if opt.dosave
         drawnow
-        exportgraphics(fig, sprintf('/tmp/hessian-eigenvectors-%s.png', casename), ...
-                       'resolution', 300)
+        scriptDirectory = fileparts(mfilename('fullpath'));
+        figureFilename = sprintf('hessian-eigenvectors-%s.png', casename);
+        exportgraphics(fig, fullfile(scriptDirectory, figureFilename), 'resolution', 300);
     end
 
 end
