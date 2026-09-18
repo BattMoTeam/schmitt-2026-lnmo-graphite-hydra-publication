@@ -1,34 +1,35 @@
 function output = runHydra(input, varargin)
+    % Build the calibrated cell, configure its schedule, and optionally run a simulation.
 
     % Input parameters
-    input_default = struct('I', [], ...
-                           'DRate'                         , []   , ...
-                           'totalTime'                     , []   , ...
-                           'numTimesteps'                  , 100  , ...
-                           'lowRateParams'                 , []   , ...
-                           'highRateParams'                , []   , ...
-                           'useRegionBruggemanCoefficients', false, ...
-                           'include_current_collectors'    , false, ...
-                           'geometry'                      , '1d', ...
-                           'uniformTimeSteps'              , true);
+    inputDefaults = struct('I', [], ...
+        'DRate', [], ...
+        'totalTime', [], ...
+        'numTimesteps', 100, ...
+        'lowRateParams', [], ...
+        'highRateParams', [], ...
+        'useRegionBruggemanCoefficients', false, ...
+        'include_current_collectors', false, ...
+        'geometry', '1d', ...
+        'uniformTimeSteps', true);
 
     if not(isempty(input))
-        fds = fieldnames(input);
-        vals = cellfun(@(fd) input.(fd), fds, 'un', false);
-        input = horzcat(fds, vals);
+        fieldNames = fieldnames(input);
+        fieldValues = cellfun(@(field) input.(field), fieldNames, 'UniformOutput', false);
+        input = horzcat(fieldNames, fieldValues);
         input = reshape(input', [], 1);
-        input = merge_options(input_default, input{:});
+        input = merge_options(inputDefaults, input{:});
     else
-        input = input_default;
+        input = inputDefaults;
     end
 
     % Solver options
-    opt = struct('runSimulation'  , true    , ...
-                 'dopacked'       , true    , ...
-                 'verbose'        , false   , ...
-                 'clearSimulation', true    , ...
-                 'outputDirectory', 'output', ...
-                 'validateJson'   , false);
+    opt = struct('runSimulation', true, ...
+        'dopacked', true, ...
+        'verbose', false, ...
+        'clearSimulation', true, ...
+        'outputDirectory', 'output', ...
+        'validateJson', false);
 
     opt = merge_options(opt, varargin{:});
 
@@ -36,13 +37,8 @@ function output = runHydra(input, varargin)
     ne    = 'NegativeElectrode';
     pe    = 'PositiveElectrode';
     elyte = 'Electrolyte';
-    am    = 'ActiveMaterial';
-    itf   = 'Interface';
-    sd    = 'SolidDiffusion';
     ctrl  = 'Control';
     co    = 'Coating';
-    bd    = 'Binder';
-    ca    = 'ConductingAdditive';
     cc    = 'CurrentCollector';
     sep   = 'Separator';
     geom  = 'Geometry';
@@ -55,21 +51,16 @@ function output = runHydra(input, varargin)
 
     % Set low rate params
     if not(isempty(input.lowRateParams))
-        jsonstruct_low_rate_params = input.lowRateParams;
-        jsonstruct = mergeStructs({jsonstruct_low_rate_params, jsonstruct}, 'warn', false);
+        jsonstruct = mergeStructs({input.lowRateParams, jsonstruct}, 'warn', false);
     end
 
     % Set high rate params
     if not(isempty(input.highRateParams))
-        jsonstruct_high_rate_params = input.highRateParams;
-        jsonstruct = mergeStructs({jsonstruct_high_rate_params, jsonstruct}, 'warn', false);
+        jsonstruct = mergeStructs({input.highRateParams, jsonstruct}, 'warn', false);
     end
 
     if input.useRegionBruggemanCoefficients
         jsonstruct.(elyte).useRegionBruggemanCoefficients = true;
-
-        % Landesfeind: tau = poro^-bg:
-        % bgFromTau = @(poro, tau) -log(tau) / log(poro);
 
         % Other literature
         % https://iopscience.iop.org/article/10.1149/2.0111502jes
@@ -96,40 +87,40 @@ function output = runHydra(input, varargin)
             tauref = 4.2;
             jsonstruct.(elyte).regionBruggemanCoefficients.(sep) = bgFromTau(poro, tauref);
         end
-        printer = @(s) disp(jsonencode(s, 'PrettyPrint', true));
-        printer(jsonstruct.(elyte).regionBruggemanCoefficients);
-        % keyboard;
+        if opt.verbose
+            disp(jsonencode(jsonstruct.(elyte).regionBruggemanCoefficients, 'PrettyPrint', true));
+        end
     end
 
     % Load geometry
     switch lower(input.geometry)
-      case '1d'
-        geomfile = 'h0b-geometry-1d.json';
-      case '3d'
-        geomfile = 'h0b-geometry-3d.json';
-      otherwise
-        error('Unsupported geometry %s', input.geometry);
+        case '1d'
+            geometryFile = 'h0b-geometry-1d.json';
+        case '3d'
+            geometryFile = 'h0b-geometry-3d.json';
+        otherwise
+            error('Unsupported geometry %s', input.geometry);
     end
-    jsonstruct_geom = parseBattmoJson(fullfile(getHydra0Dir(), 'parameters', geomfile));
-    jsonstruct = mergeStructs({jsonstruct_geom, jsonstruct});
+    geometryParameters = parseBattmoJson(fullfile(getHydra0Dir(), 'parameters', geometryFile));
+    jsonstruct = mergeStructs({geometryParameters, jsonstruct});
 
     % Scale input geometry
     if strcmpi(jsonstruct.Geometry.case, '1D') && jsonstruct.include_current_collectors
-        json_geom_3d = parseBattmoJson(fullfile(getHydra0Dir(), 'parameters', 'h0b-geometry-3d.json'));
+        geometry3d = parseBattmoJson(fullfile(getHydra0Dir(), 'parameters', 'h0b-geometry-3d.json'));
 
-        ne_LH = struct('L', json_geom_3d.(geom).length, ...
-                       'h', json_geom_3d.(geom).width, ...
-                       't', jsonstruct.(ne).(cc).thickness);
+        negativeCollectorGeometry = struct('L', geometry3d.(geom).length, ...
+            'h', geometry3d.(geom).width, ...
+            't', jsonstruct.(ne).(cc).thickness);
 
-        ne_effkappa = geometryScaling(ne_LH, jsonstruct.(ne).(cc).electronicConductivity);
-        jsonstruct.(ne).(cc).electronicConductivity = ne_effkappa;
+        jsonstruct.(ne).(cc).electronicConductivity = geometryScaling(negativeCollectorGeometry, ...
+            jsonstruct.(ne).(cc).electronicConductivity);
 
-        pe_LH = struct('L', json_geom_3d.(geom).length, ...
-                       'h', json_geom_3d.(geom).width, ...
-                       't', jsonstruct.(pe).(cc).thickness);
+        positiveCollectorGeometry = struct('L', geometry3d.(geom).length, ...
+            'h', geometry3d.(geom).width, ...
+            't', jsonstruct.(pe).(cc).thickness);
 
-        pe_effkappa = geometryScaling(pe_LH, jsonstruct.(pe).(cc).electronicConductivity);
-        jsonstruct.(pe).(cc).electronicConductivity = pe_effkappa;
+        jsonstruct.(pe).(cc).electronicConductivity = geometryScaling(positiveCollectorGeometry, ...
+            jsonstruct.(pe).(cc).electronicConductivity);
 
     end
 
@@ -168,9 +159,11 @@ function output = runHydra(input, varargin)
     end
 
     % Setup nonlinear solver
-    jsonstruct_nls = parseBattmoJson(fullfile('Utilities', 'Linearsolvers', 'JsonDataFiles', 'default_direct_linear_solver.json'));
-    jsonstruct_nls.verbose = opt.verbose;
-    jsonstruct = mergeStructs({jsonstruct_nls, jsonstruct});
+    solverFile = fullfile('Utilities', 'Linearsolvers', 'JsonDataFiles', ...
+        'default_direct_linear_solver.json');
+    solverParameters = parseBattmoJson(solverFile);
+    solverParameters.verbose = opt.verbose;
+    jsonstruct = mergeStructs({solverParameters, jsonstruct});
     [model, nls, jsonstruct] = setupNonLinearSolverFromJson(model, jsonstruct);
 
     if input.uniformTimeSteps
@@ -193,9 +186,9 @@ function output = runHydra(input, varargin)
     end
 
     timestep = struct('totalTime', totalTime, ...
-                      'numberOfTimeSteps', input.numTimesteps, ...
-                      'useRampup', true, ...
-                      'numberOfRampupSteps', 10);
+        'numberOfTimeSteps', input.numTimesteps, ...
+        'useRampup', true, ...
+        'numberOfRampupSteps', 10);
     step    = model.Control.setupScheduleStep(timestep);
     control = model.Control.setupScheduleControl();
     schedule = struct('control', control, 'step', step);
@@ -215,20 +208,20 @@ function output = runHydra(input, varargin)
         directory = fullfile(getHydra0Dir(), opt.outputDirectory);
         dataFolder = input.simtag;
         output.problem = packSimulationProblem(initstate, model, schedule, dataFolder, ...
-                                               'Directory', directory                , ...
-                                               'Name', input.simtag                  , ...
-                                               'NonLinearSolver', nls);
+            'Directory', directory, ...
+            'Name', input.simtag, ...
+            'NonLinearSolver', nls);
         output.dataDirectory = output.problem.OutputHandlers.states.dataDirectory;
         output.dataFolder    = output.problem.OutputHandlers.states.dataFolder;
-        inputfilename        = fullfile(output.dataDirectory, output.dataFolder, 'input.mat');
-        jsoninputfilename    = fullfile(output.dataDirectory, output.dataFolder, 'input.json');
+        inputFilename = fullfile(output.dataDirectory, output.dataFolder, 'input.mat');
+        jsonInputFilename = fullfile(output.dataDirectory, output.dataFolder, 'input.json');
 
         if not(isempty(input.lowRateParams))
-            output.jsonstruct_low_rate_params = jsonstruct_low_rate_params;
+            output.jsonstruct_low_rate_params = input.lowRateParams;
         end
 
         if not(isempty(input.highRateParams))
-            output.jsonstruct_high_rate_params = jsonstruct_high_rate_params;
+            output.jsonstruct_high_rate_params = input.highRateParams;
         end
 
         if not(opt.runSimulation)
@@ -236,25 +229,20 @@ function output = runHydra(input, varargin)
             output.input = input;
             [~, output.states] = getPackedSimulatorOutput(output.problem);
 
-            if isempty(output.states)
-                foundresults = false;
-            else
-                foundresults = true;
-            end
-
-            if foundresults
-                dispif(opt.verbose, sprintf('Results of a previous simulation have been found and added to the output\n'));
+            if ~isempty(output.states)
+                dispif(opt.verbose, sprintf(['Results of a previous simulation have been ', ...
+                    'found and added to the output\n']));
             elseif opt.verbose
-                fprintf('No previous simulations with hash %s were found for this setup in the %s directory\n', ...
-                        input.simtag, opt.outputDirectory);
+                fprintf(['No previous simulations with hash %s were found for this setup ', ...
+                    'in the %s directory\n'], input.simtag, opt.outputDirectory);
             end
 
             return
 
         end
 
-        save(inputfilename, 'input');
-        writeStruct(jsonencode(input, 'PrettyPrint', true), jsoninputfilename);
+        save(inputFilename, 'input');
+        writeStruct(jsonencode(input, 'PrettyPrint', true), jsonInputFilename);
 
         if opt.clearSimulation
             clearPackedSimulatorOutput(output.problem, 'Prompt', false);
@@ -269,8 +257,8 @@ function output = runHydra(input, varargin)
     else
 
         [~, output.states] = simulateScheduleAD(initstate, model, schedule, ...
-                                                'OutputMinisteps', true, ...
-                                                'NonLinearSolver', nls);
+            'OutputMinisteps', true, ...
+            'NonLinearSolver', nls);
 
     end
 
