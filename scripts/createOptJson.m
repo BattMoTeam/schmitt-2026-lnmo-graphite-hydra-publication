@@ -35,7 +35,8 @@ jsonOpt = removeJsonComments(jsonOpt);
 
 dosave = true;
 if dosave
-    filename = fullfile(getHydra0Dir(), 'parameters', 'h0b-opt.json');
+    filename = fullfile(getHydra0Dir(), 'parameters', ...
+        'IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.json');
     writeStruct(jsonOpt, filename);
 end
 
