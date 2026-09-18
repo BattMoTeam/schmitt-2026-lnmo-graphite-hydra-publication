@@ -1,8 +1,14 @@
-# Python dependencies for the BPX / PyBaMM interoperability workflow.
+# Python dependencies for interoperability workflows and linked-data validation.
 # Install with:
 #   python -m pip install -r requirements.txt
 
 pybamm[bpx]
+# BPX 1.0 schema (the bpx 1.1 series uses a different document layout).
+bpx==0.5.0
+numpy
 scipy
 h5py
 matplotlib
+
+# JSON-LD regression validation. convert_from_battmo_to_jsonld.py itself uses only the standard library.
+PyLD
