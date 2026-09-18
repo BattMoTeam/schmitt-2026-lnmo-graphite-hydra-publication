@@ -78,7 +78,7 @@ end
 
 
 function initialGroup = ClassifyScaledSensitivity(scaledSensitivity)
-% Hybrid-adaptive grouping copied from the sequential calibration workflow.
+% Group derivative magnitudes using percentiles, with log spacing for wide ranges.
 
     % Classification depends on derivative magnitudes, independent of their signs.
     scaledSensitivity = abs(scaledSensitivity);

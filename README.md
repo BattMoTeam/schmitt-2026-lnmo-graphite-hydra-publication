@@ -9,17 +9,24 @@ The repository demonstrates the P2D model calibration workflow described in the 
 1. Clone this repository.
 2. Clone BattMo locally.
 3. Set `BATTMO_DIR` to the BattMo root containing `startupBattMo.m`.
-4. Start MATLAB and run the `startupBattMo.m` script.
+4. Start MATLAB in this repository and run `startup.m` to configure the project and BattMo.
 
 
 ## Entry Points
 
-After installing and configuring BattMo as described above, the main entry point is to run the full MATLAB-side publication reproduction script (typical duration: `1 - 3 h`): `runReproduction`
+After running `startup.m`, use these main calibration and validation scripts:
 
-Optionally, the components can also be run individually using the following scripts:
 - Low-rate calibration only (typical duration: `2 - 10 min`): `scripts/low-rate-calibration/runEquilibriumCalibration.m`
 - High-rate calibration only (typical duration: `45 - 180 min`): `scripts/high-rate-calibration/runHighRateCalibration.m`
 - Validation plot only (typical duration: `5 - 15 min`): `scripts/runValidation.m`
+
+The main sensitivity-reporting function is `scripts/high-rate-calibration/computeSensitivities.m`.
+It takes a calibration object, an objective function, and the objective scaling, and reports
+scaled, physical, and relative parameter sensitivities.
+
+Additional workflows:
+
+- Full MATLAB-side publication reproduction (typical duration: `1 - 3 h`): `runReproduction`
 - Figure export only (typical duration: `10 - 30 min`): `scripts/exportPublicationFigures.m`
 - Python-side validation summary only (typical duration: `< 1 min`; `5 - 15 min` with `-IncludeBpx`): `run-validation.ps1`
 
