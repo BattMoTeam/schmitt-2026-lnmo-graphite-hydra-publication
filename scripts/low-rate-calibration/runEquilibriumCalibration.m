@@ -1,25 +1,15 @@
 %% Script to calibrate parameters under equilibrium assumptions
 
-clear all
+clearvars
 close all
 
 diary(sprintf('_diary-%s-%s.txt', mfilename, datestr(now, 'yyyymmdd-HHMMSS')));
 
-mrstDebug(99);
+mrstDebug(0);
 
-set(0, 'defaultlinelinewidth', 2)
-set(0, 'defaulttextfontsize', 15);
-set(0, 'defaultaxesfontsize', 15);
-
-am   = 'ActiveMaterial';
-itf  = 'Interface';
 pe   = 'PositiveElectrode';
 ne   = 'NegativeElectrode';
-co   = 'Coating';
-sd   = 'SolidDiffusion';
 ctrl = 'Control';
-geom = 'Geometry';
-sep  = 'Separator';
 
 getTime = @(states) cellfun(@(s) s.time, states);
 getE = @(states) cellfun(@(s) s.(ctrl).E, states);
@@ -31,26 +21,27 @@ datafilename = fullfile(getHydra0Dir(), 'raw-data', 'TE_1473.mat');
 saveddata    = load(datafilename);
 dataraw      = saveddata.experiment;
 
-% Lowest DRate is first
+% The first experiment has the lowest discharge current.
 expdata = struct('time', dataraw.time{1} * hour        , ...
                  'U'   , dataraw.voltage{1}            , ...
                  'cap' , abs(trapz(dataraw.time{1}*hour, dataraw.current{1})), ...
                  'I'   , abs(mean(dataraw.current{1})));
-expdata.DRate = expdata.I / expdata.cap * hour;
 
 %% Initial guess simulation
 
-input = struct('DRate'                     , expdata.DRate    , ...
+input = struct('I'                         , expdata.I        , ...
                'totalTime'                 , expdata.time(end), ...
                'include_current_collectors', true);
 outputInit = runHydra(input, 'clearSimulation', false);
-css0 = CellSpecificationSummary(outputInit.model);
 
 %% Setup and run optimization
 
 [~, caps] = computeCellCapacity(outputInit.model);
+ne_area = 5.2*centi*5.2*centi;
+ne_num_layers = 2*10;
+ne_eff_area = ne_area * ne_num_layers;
 areas = struct(pe, outputInit.jsonstruct.Geometry.faceArea, ...
-               ne, 540.8*centi^2);
+               ne, ne_eff_area);
 np_ratio = caps.(ne) / caps.(pe) * areas.(ne) / areas.(pe);
 
 ecs = EquilibriumCalibrationSetup(outputInit.model, expdata);
@@ -72,7 +63,7 @@ end
 X0 = ecs.X0;
 v0 = ecs.objective(X0);
 vopt = ecs.objective(Xopt);
-[fexp, fcomp] = ecs.setupfunction();
+[~, fcomp] = ecs.setupfunction();
 
 %% Print
 
@@ -96,9 +87,9 @@ printer(jsonstructEC);
 
 %% Simulation with calibrated parameters
 
-input = struct('DRate'        , expdata.I * hour / expdata.cap, ...
-               'totalTime'    , expdata.time(end)             , ...
-               'lowRateParams', jsonstructEC, ...
+input = struct('I'                         , expdata.I        , ...
+               'totalTime'                 , expdata.time(end), ...
+               'lowRateParams'             , jsonstructEC     , ...
                'include_current_collectors', true);
 outputOpt = runHydra(input, 'clearSimulation', false);
 cssOpt = CellSpecificationSummary(outputOpt.model);
@@ -107,7 +98,7 @@ fprintf('NP ratio after calibration: %g\n', cssOpt.NPratio);
 %% Plot
 
 colors = lines(4);
-fig = figure%;('Units', 'inches', 'Position', [0.1, 0.1, 8, 6]);
+fig = figure;
 hold on
 plot(expdata.time/hour, expdata.U, 'k--', 'displayname', 'Experiment 0.05 C');
 plot(expdata.time/hour, fcomp(expdata.time, X0), 'color', colors(3,:), 'displayname', 'Initial data');
