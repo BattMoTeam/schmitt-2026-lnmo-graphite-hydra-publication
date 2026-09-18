@@ -1,27 +1,17 @@
 %% Script to calibrate parameters using high-rate data
 
-clear all
+clearvars
 close all
-
-% % Keep plotting available for file export when running without a desktop or X display.
-% if ~usejava('desktop')
-%     set(groot, 'DefaultFigureVisible', 'off');
-% end
 
 diaryname = sprintf('_diary-%s-%s.txt', mfilename, datetime('now', 'Format', 'yyyyMMdd-HHmmss'));
 diary(diaryname);
 
-am    = 'ActiveMaterial';
-itf   = 'Interface';
 pe    = 'PositiveElectrode';
 ne    = 'NegativeElectrode';
 co    = 'Coating';
-sd    = 'SolidDiffusion';
 ctrl  = 'Control';
 elyte = 'Electrolyte';
 sep   = 'Separator';
-
-% mrstDebug(0);
 
 doplot = true;
 debug = true;
@@ -40,35 +30,30 @@ datafilename = fullfile(getHydra0Dir(), 'raw-data', 'TE_1473.mat');
 saveddata    = load(datafilename);
 dataraw      = saveddata.experiment;
 
-% Highest DRate is last
+% The last experiment has the highest discharge current.
 k = numel(dataraw.time);
 expdata = struct('time', dataraw.time{k} * hour, ...
-                 'U'   , dataraw.voltage{k}    , ...
-                 'I'   , abs(mean(dataraw.current{k})));
+    'U', dataraw.voltage{k}, ...
+    'I', abs(mean(dataraw.current{k})));
 
 %% Initial guess using equilibrium calibration data
 
 filename     = fullfile(getHydra0Dir(), 'parameters', 'equilibrium-calibration-parameters.json');
 jsonstructEC = parseBattmoJson(filename);
 
-% shortnames = {'ne_vsa', 'pe_vsa', 'ne_bg', 'pe_bg', 'ne_D', 'pe_D', 'elyte_bg_ne', 'elyte_bg_pe', 'elyte_bg_sep'};
 shortnames = {'pe_vsa', 'ne_D', 'pe_D', 'elyte_bg_ne', 'elyte_bg_pe', 'elyte_bg_sep'};
 disp('shortnames:');
 printer(shortnames);
 useRegionBruggemanCoefficients = any(contains(shortnames, 'elyte_bg'));
 
-numTimesteps = 400; %100; % 400
-input0 = struct('I'                             , expdata.I, ...
-                'totalTime'                     , expdata.time(end)             , ...
-                'numTimesteps'                  , numTimesteps                  , ...
-                'lowRateParams'                 , jsonstructEC                  , ...
-                'useRegionBruggemanCoefficients', useRegionBruggemanCoefficients, ...
-                'include_current_collectors'    , true);
+numTimesteps = 400;
+input0 = struct('I', expdata.I, ...
+    'totalTime', expdata.time(end), ...
+    'numTimesteps', numTimesteps, ...
+    'lowRateParams', jsonstructEC, ...
+    'useRegionBruggemanCoefficients', useRegionBruggemanCoefficients, ...
+    'include_current_collectors', true);
 output0 = runHydra(input0, 'clearSimulation', false);
-
-% Avoid adaptive time stepping to ensure adjoint consistency
-output0.nls.timeStepSelector = SimpleTimeStepSelector();
-output0.nls.maxTimestepCuts = 0;
 
 if debug
     % Check how exp and initial guess compare
@@ -109,11 +94,11 @@ if debug
     drawnow
 end
 
-simulatorSetup = SimulationSetup(struct('model'          , output0.model   , ...
-                                        'schedule'       , output0.schedule, ...
-                                        'initstate'      , output0.initstate, ...
-                                        'NonLinearSolver', output0.nls     , ...
-                                        'OutputMinisteps', false));
+simulatorSetup = SimulationSetup(struct('model', output0.model, ...
+    'schedule', output0.schedule, ...
+    'initstate', output0.initstate, ...
+    'NonLinearSolver', output0.nls, ...
+    'OutputMinisteps', false));
 
 % Setup parameters to be calibrated
 HRC = HighRateCalibration(simulatorSetup, 'shortnames', shortnames);
@@ -123,39 +108,12 @@ lsq = @(simsetup, states, varargin) leastSquaresEI(simsetup, states, statesExp, 
 v = lsq(simulatorSetup, output0.states);
 scaling = sum([v{:}]);
 objective = @(p, varargin) evalObjectiveBattmo(p, lsq, simulatorSetup, HRC.getParams(), ...
-                                               'objScaling', scaling, varargin{:});
+    'objScaling', scaling, varargin{:});
 
 % Compute and classify sensitivities at the initial parameter values.
-[senstbl, sensitivityReport] = computeSensitivities(HRC, objective, scaling);
+[~, sensitivityReport] = computeSensitivities(HRC, objective, scaling);
 X0 = sensitivityReport.scaledParameters;
 initialParams = sensitivityReport.parameterValues;
-
-plotSens = false;
-if plotSens
-    % Plot log scaled and unscaled sensitivities
-    figure;
-    bar(log10(abs(senstbl.scaledSensitivity)));
-    set(gca, 'XTick', 1:numel(senstbl.scaledSensitivity), ...
-             'XTickLabel', strrep(senstbl.Parameter, '_', '\_'), ...
-             'XTickLabelRotation', 45);
-    ylabel('log_{10}(|dJ/dp_{sc}|), p_{sc} = scaled parameter');
-    title('Scaled Parameter Sensitivities');
-    figure;
-    bar(log10(abs(senstbl.unscaledSensitivity)));
-    set(gca, 'XTick', 1:numel(senstbl.unscaledSensitivity), ...
-             'XTickLabel', strrep(senstbl.Parameter, '_', '\_'), ...
-             'XTickLabelRotation', 45);
-    ylabel('log_{10}(|dJ/dp|), p = unscaled parameter');
-    title('Unscaled Parameter Sensitivities');
-    figure;
-    bar(log10(abs(senstbl.relativeSensitivity)));
-    set(gca, 'XTick', 1:numel(senstbl.relativeSensitivity), ...
-             'XTickLabel', strrep(senstbl.Parameter, '_', '\_'), ...
-             'XTickLabelRotation', 45);
-    ylabel('log_{10}(|p{\cdot}dJ/dp|)');
-    title('Relative Parameter Sensitivities');
-    return % For checking initial sensitivities
-end
 
 if debug
     % The least squares function evaluated at the experimental values
@@ -166,45 +124,44 @@ if debug
     % Compare gradients calculated using adjoints and finite
     % difference approximation
     disp('Gradient comparison at initial parameters:');
-    compareAdjointAndFiniteDifferenceGradients( ...
-        X0, objective, HRC.shortnames, ...
+    compareAdjointAndFiniteDifferenceGradients(X0, objective, HRC.shortnames, ...
         'PerturbationSize', gradSteps, ...
         'doplot', true);
-    %return
 end
 
 %% Run optimization
 
 v0 = sensitivityReport.objectiveValue;
 
-callbackfunc = @(history, it) callbackplot(history, it, simulatorSetup, HRC.getParams(), expdata, ...
-                                           'plotEveryIt', 10     , ...
-                                           'objScaling' , scaling, ...
-                                           'doplot'     , doplot);
+callbackfunc = @(history, it) callbackplot(history, it, simulatorSetup, ...
+    HRC.getParams(), expdata, ...
+    'plotEveryIt', 10, ...
+    'objScaling', scaling, ...
+    'doplot', doplot);
 
 gradTol = 1e-4;
-objChangeTol = -inf; %1e-13;
+objChangeTol = -inf;
 maxit = 500;
 [vopt, Xopt, history] = unitBoxBFGS(X0, objective, ...
-                                    'gradTol'         , gradTol     , ...
-                                    'objChangeTol'    , objChangeTol, ...
-                                    'lineSearchMaxIt' , 10          , ...
-                                    'maxInitialUpdate', 0.02        , ...
-                                    'maximize'        , false       , ...
-                                    'maxit'           , maxit       , ...
-                                    'logPlot'         , true        , ...
-                                    'callbackfunc'    , callbackfunc, ...
-                                    'plotEvolution'   , doplot      , ...
-                                    'limitedMemory'   , ~hessian    , ...
-                                    'outputHessian'   , hessian);
+    'gradTol', gradTol, ...
+    'objChangeTol', objChangeTol, ...
+    'lineSearchMaxIt', 10, ...
+    'maxInitialUpdate', 0.02, ...
+    'maximize', false, ...
+    'maxit', maxit, ...
+    'logPlot', true, ...
+    'callbackfunc', callbackfunc, ...
+    'plotEvolution', doplot, ...
+    'limitedMemory', ~hessian, ...
+    'outputHessian', hessian);
 
 setupOpt = updateSetupFromScaledParameters(simulatorSetup, HRC.getParams(), Xopt);
 
 fprintf('obj val=%1.2f (%1.2f), iter=%d\n', vopt, v0, numel(history.val));
 reasonStr = getReasonStr(history, ...
-                         'gradTol'     , gradTol     , ...
-                         'objChangeTol', objChangeTol, ...
-                         'maxit'       , maxit);
+    'gradTol', gradTol, ...
+    'objChangeTol', objChangeTol, ...
+    'maxit', maxit);
 disp(reasonStr);
 
 if debug && numel(history.val) >= 2 && ...
@@ -212,17 +169,13 @@ if debug && numel(history.val) >= 2 && ...
 
     % Calculate fd and adjoint gradients at final point
     disp('Gradient comparison at optimized parameters:');
-    compareAdjointAndFiniteDifferenceGradients( ...
-        Xopt, objective, HRC.shortnames, ...
+    compareAdjointAndFiniteDifferenceGradients(Xopt, objective, HRC.shortnames, ...
         'PerturbationSize', gradSteps);
 end
 
-% Plot evolution
-fig = figure('Position', [100, 100, 560, 560]);
-plotParameterEvolution(diaryname, HRC.shortnames(), 'gradTol', gradTol, 'figure', fig);
-if dosave
-    drawnow
-    exportgraphics(fig, '/tmp/parameter-evolution.png', 'resolution', 300)
+if doplot
+    fig = figure('Position', [100, 100, 560, 560]);
+    plotParameterEvolution(diaryname, HRC.shortnames(), 'gradTol', gradTol, 'figure', fig);
 end
 
 %% Extract parameters
@@ -234,31 +187,22 @@ printer(jsonstructHRC);
 
 %% Run model with calibrated parameters
 
-inputOpt = struct('I'                             , expdata.I                     , ...
-                  'totalTime'                     , expdata.time(end)             , ...
-                  'numTimesteps'                  , numTimesteps                  , ...
-                  'lowRateParams'                 , jsonstructEC                  , ...
-                  'highRateParams'                , jsonstructHRC                 , ...
-                  'useRegionBruggemanCoefficients', useRegionBruggemanCoefficients, ...
-                  'include_current_collectors'    , true);
+inputOpt = struct('I', expdata.I, ...
+    'totalTime', expdata.time(end), ...
+    'numTimesteps', numTimesteps, ...
+    'lowRateParams', jsonstructEC, ...
+    'highRateParams', jsonstructHRC, ...
+    'useRegionBruggemanCoefficients', useRegionBruggemanCoefficients, ...
+    'include_current_collectors', true);
 outputOpt = runHydra(inputOpt, 'clearSimulation', false);
-
-bgfactorShortnames = {'elyte_bgfactor', 'elyte_bgfactorKappa', 'elyte_bgfactorD'};
-bgfactorFields = {'bgfactor', 'bgfactorKappa', 'bgfactorD'};
-for k = 1:numel(bgfactorShortnames)
-    if any(strcmp(shortnames, bgfactorShortnames{k}))
-        fieldname = bgfactorFields{k};
-        assert(outputOpt.model.Electrolyte.(fieldname) == ...
-               setupOpt.model.Electrolyte.(fieldname));
-    end
-end
 
 %% Quantify differences
 
 vfinal = lsq(simulatorSetup, outputOpt.states);
 
 getExpUinterp = @(t) interp1(expdata.time, expdata.U, t, 'linear', 'extrap');
-RMSE = l2error(getTime(outputOpt.states), getE(outputOpt.states), expdata.time, expdata.U, 'extrap', true);
+RMSE = l2error(getTime(outputOpt.states), getE(outputOpt.states), ...
+    expdata.time, expdata.U, 'extrap', true);
 
 fprintf('Final least squares values:\n');
 fprintf('vopt: %g\n', vopt);
@@ -268,7 +212,9 @@ fprintf('RMSE: %g mV\n', RMSE/milli);
 if doplot
     % plot differences
     figure; hold on; grid on;
-    plot(getTime(outputOpt.states), (getE(outputOpt.states) - getExpUinterp(getTime(outputOpt.states))).^2, 'displayname', '|E_{sim} - E_{exp}|^2');
+    voltageResidual = getE(outputOpt.states) - getExpUinterp(getTime(outputOpt.states));
+    plot(getTime(outputOpt.states), voltageResidual.^2, ...
+        'displayname', '|E_{sim} - E_{exp}|^2');
     plot(getTime(outputOpt.states), [vfinal{:}], 'displayname', 'vfinal');
 end
 
@@ -276,26 +222,19 @@ end
 
 if doplot
     colors = lines(2);
-    fig = figure('Units', 'inches', 'Position', [0.1, 0.1, 8, 6]);
+    figure('Units', 'inches', 'Position', [0.1, 0.1, 8, 6]);
     hold on;
     plot(expdata.time/hour, expdata.U, 'k--', 'displayname', 'Experiment 2C');
-    plot(getTime(output0.states)/hour, getE(output0.states), 'color', colors(1,:), 'displayname', 'Initial guess')
-    plot(getTime(outputOpt.states)/hour, getE(outputOpt.states), 'color', colors(2,:), 'displayname', 'Calibrated');
+    plot(getTime(output0.states)/hour, getE(output0.states), ...
+        'color', colors(1,:), 'displayname', 'Initial guess');
+    plot(getTime(outputOpt.states)/hour, getE(outputOpt.states), ...
+        'color', colors(2,:), 'displayname', 'Calibrated');
     xlabel('Time  /  h')
     ylabel('E  /  V')
     legend('location', 'sw')
     axis tight
     ylim([3.45, 4.9])
-
-    if dosave
-        exportgraphics(fig, 'high-rate-calibration.png', 'resolution', 300)
-    end
 end
-
-%% Quantify difference between experiment and calibrated
-
-RMSE = l2error(getTime(outputOpt.states), getE(outputOpt.states), expdata.time, expdata.U, 'extrap', true);
-fprintf('RMSE after calibration: %g mV\n', RMSE/milli);
 
 %% Check hessian
 
@@ -303,92 +242,64 @@ if hessian
 
     % history.hess contains the inverse approximate Hessian in scaled coordinates
     invHscaled = full(history.hess{end});
-    hessianfdpertsize = 1e-6; % deduced from debug
+    hessianFdStep = 1e-6; % Selected from the finite-difference comparison.
 
     Hscaled = calculateBFGSHessian(invHscaled, HRC.shortnames);
     if debug
-        [HfdComparison, HfdReport] = calculateFDHessian(Xopt, objective, HRC.shortnames, hessianSteps);
+        [HfdComparison, HfdReport] = calculateFDHessian(Xopt, objective, ...
+            HRC.shortnames, hessianSteps);
         compareHessians(Hscaled, HfdComparison, HfdReport, Xopt, HRC.shortnames);
     end
     [HfdScaled, hessianReport] = calculateFDHessian(Xopt, objective, ...
-                                                    HRC.shortnames, hessianfdpertsize);
+        HRC.shortnames, hessianFdStep);
 
+    % Export these figures with the other run figures below.
     plotHessianEigenvectors(Hscaled, HRC.shortnames, 'BFGS', 'dosave', dosave);
-    plotHessianEigenvectors(HfdScaled, HRC.shortnames, 'FD', 'dosave', dosave);
+    plotHessianEigenvectors(HfdScaled, HRC.shortnames, 'FD');
 
-end % if hessian
+end
 
 %% Print
 
 disp('Results HRC');
 printer(jsonstructHRC);
 
-% Print tortuosities using bgfactor: we have eff cond = bgfactor *
-% cond * poro^bman = cond * poro^(bman*lg(bgfactor)) = cond *
-% poro^(eff bman). From this we can calculate the tortuosities as tau
-% = poro^-bman.
+% Report tortuosities from the calibrated regional Bruggeman coefficients.
 
 model = outputOpt.model;
-tortuosityLandesfeind = @(vf, bman) vf.^(-bman);
 tortuosity = @(vf, bman) vf.^(1-bman);
-if any(strcmp(HRC.shortnames(), 'elyte_bgfactor'))
-    rbc = model.(elyte).regionBruggemanCoefficients;
-    bgfactor = model.(elyte).bgfactor;
-    effbman = @(poro, bman) bman * log(bgfactor) / log(poro);
-    effbmen = struct();
-    effbmen.(ne) = effbman(1-model.(ne).(co).volumeFraction, rbc.(ne));
-    effbmen.(pe) = effbman(1-model.(pe).(co).volumeFraction, rbc.(pe));
-    effbmen.(sep) = effbman(model.(sep).porosity, rbc.(sep));
-    disp('Pseudo Bruggeman coefficients:');
-    printer(effbmen);
-
-    % Convert to tortuosities
-    tau = struct();
-    tau.(ne) = tortuosity(1-model.(ne).(co).volumeFraction, effbmen.(ne));
-    tau.(pe) = tortuosity(1-model.(pe).(co).volumeFraction, effbmen.(pe));
-    tau.(sep) = tortuosity(model.(sep).porosity, effbmen.(sep));
-    disp('Derived tortuosities');
-    printer(tau);
-end
 if any(strcmp(HRC.shortnames(), 'elyte_bg_ne'))
     poro = 1 - model.(ne).(co).volumeFraction;
     bg = model.(elyte).regionBruggemanCoefficients.(ne);
-    tau_ne = tortuosity(poro, bg);
-    tauL_ne = tortuosityLandesfeind(poro, bg);
-    fprintf('tau ne %g\n', tau_ne);
-    fprintf('tauL ne %g\n', tauL_ne);
+    tauNe = tortuosity(poro, bg);
+    fprintf('tau ne %g\n', tauNe);
 end
 if any(strcmp(HRC.shortnames(), 'elyte_bg_pe'))
     poro = 1 - model.(pe).(co).volumeFraction;
     bg = model.(elyte).regionBruggemanCoefficients.(pe);
-    tau_pe = tortuosity(poro, bg);
-    tauL_pe = tortuosityLandesfeind(poro, bg);
-    fprintf('tau pe %g\n', tau_pe);
-    fprintf('tauL pe %g\n', tauL_pe);
+    tauPe = tortuosity(poro, bg);
+    fprintf('tau pe %g\n', tauPe);
 end
 if any(strcmp(HRC.shortnames(), 'elyte_bg_sep'))
     poro = model.(sep).porosity;
     bg = model.(elyte).regionBruggemanCoefficients.(sep);
-    tau_sep = tortuosity(poro, bg);
-    tauL_sep = tortuosityLandesfeind(poro, bg);
-    fprintf('tau sep %g\n', tau_sep);
-    fprintf('tauL sep %g\n', tauL_sep);
+    tauSep = tortuosity(poro, bg);
+    fprintf('tau sep %g\n', tauSep);
 end
 
 effCond = struct(pe, outputOpt.model.(pe).(co).effectiveElectronicConductivity, ...
-                 ne, outputOpt.model.(ne).(co).effectiveElectronicConductivity);
+    ne, outputOpt.model.(ne).(co).effectiveElectronicConductivity);
 disp('Effective electronic conductivities:');
 printer(effCond);
 
-fprintf('RMSE %g mV\n', RMSE/milli);
 disp(reasonStr)
 
 % Print initial and final vals, plus sensitivities
 finalParams = cellfun(@(p) p.getParameterValue(setupOpt), HRC.getParams());
 sensitivitySummary = table(HRC.shortnames(:), initialParams(:), finalParams(:), ...
-                           sensitivityReport.scaledSensitivity(:), sensitivityReport.initialGroup(:), ...
-                           'VariableNames', ...
-                           {'Shortname', 'InitialValue', 'FinalValue', 'scaledSensitivity', 'InitialGroup'});
+    sensitivityReport.scaledSensitivity(:), sensitivityReport.initialGroup(:), ...
+    'VariableNames', ...
+    {'Shortname', 'InitialValue', 'FinalValue', 'scaledSensitivity', 'InitialGroup'});
 fprintf('\nInitial sensitivity classification and calibration results:\n');
 disp(sensitivitySummary);
 
@@ -415,8 +326,8 @@ if hessian
     end
     hessianFile = fullfile(resultFolder, 'hessian.mat');
     save(hessianFile, 'Hscaled', 'HfdScaled', 'invHscaled', 'hessianReport', ...
-         'Xopt', 'vopt', 'scaling', 'HRC', 'simulatorSetup', 'statesExp', 'expdata', ...
-         'input0', 'jsonstructHRC', 'diaryname', 'reasonStr', '-v7.3');
+        'Xopt', 'vopt', 'scaling', 'HRC', 'simulatorSetup', 'statesExp', 'expdata', ...
+        'input0', 'jsonstructHRC', 'diaryname', 'reasonStr', '-v7.3');
     fprintf('Saved Hessians and optimum simulation setup to %s\n', hessianFile);
 end
 
