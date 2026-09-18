@@ -120,6 +120,92 @@ end
 RMSE = l2error(expdata.time, expdata.U, getTime(outputOpt.states), getE(outputOpt.states), 'extrap', true);
 fprintf('RMSE after calibration: %g mV\n', RMSE/milli);
 
+%% Plot electrode and full-cell OCPs before and after cell balancing
+
+experimentalTime = expdata.time(:);
+experimentDuration = experimentalTime(end) - experimentalTime(1);
+extendedTime = linspace(experimentalTime(1), ...
+    experimentalTime(end) + 0.4 * experimentDuration, numel(experimentalTime))';
+
+% Use the same calibration coordinates as the optimization, without new simulations.
+[initialCellOcp, initialPositiveOcp, initialNegativeOcp] = ecs.computeF(extendedTime, X0);
+[calibratedCellOcp, calibratedPositiveOcp] = ecs.computeF(experimentalTime, Xopt);
+
+negativeInterface = outputInit.jsonstruct.NegativeElectrode.Coating.ActiveMaterial.Interface;
+positiveInterface = outputInit.jsonstruct.PositiveElectrode.Coating.ActiveMaterial.Interface;
+negativeOcpLimit = computeOCPanodeH0b(negativeInterface.guestStoichiometry0);
+positiveOcpLimit = computeOCPcathodeH0b(positiveInterface.guestStoichiometry0);
+
+% Retain curves up to the initial electrode discharge limits. If a limit is not
+% reached in the extended window, retain the available curve instead of an empty slice.
+positiveEndIndex = find(initialPositiveOcp <= positiveOcpLimit, 1, 'first');
+if isempty(positiveEndIndex)
+    positiveEndIndex = numel(extendedTime);
+end
+negativeEndIndex = find(initialNegativeOcp >= negativeOcpLimit, 1, 'first');
+if isempty(negativeEndIndex)
+    negativeEndIndex = numel(extendedTime);
+end
+
+% Extend the calibrated graphite curve to negative capacity to show electrode balancing.
+negativeTime = linspace(experimentalTime(1) - 0.4 * experimentDuration, ...
+    extendedTime(end), numel(extendedTime))';
+[~, ~, calibratedNegativeOcp] = ecs.computeF(negativeTime, Xopt);
+calibratedNegativeEndIndex = find(calibratedNegativeOcp >= negativeOcpLimit, 1, 'first');
+if isempty(calibratedNegativeEndIndex)
+    calibratedNegativeEndIndex = numel(negativeTime);
+end
+negativeTime = negativeTime(1:calibratedNegativeEndIndex);
+calibratedNegativeOcp = calibratedNegativeOcp(1:calibratedNegativeEndIndex);
+negativeStartIndex = find(calibratedNegativeOcp >= 0, 1, 'first');
+assert(~isempty(negativeStartIndex), 'No nonnegative calibrated graphite OCP values to plot.');
+negativeTime = negativeTime(negativeStartIndex:end);
+calibratedNegativeOcp = calibratedNegativeOcp(negativeStartIndex:end);
+
+% Convert constant-current charge in A s to mAh per cm^2 of model face area.
+faceArea = outputInit.jsonstruct.Geometry.faceArea;
+arealCapacity = @(time) expdata.I * (time - experimentalTime(1)) / hour / milli ...
+    * centi^2 / faceArea;
+experimentalCapacity = arealCapacity(experimentalTime);
+initialPositiveCapacity = arealCapacity(extendedTime(1:positiveEndIndex));
+initialNegativeCapacity = arealCapacity(extendedTime(1:negativeEndIndex));
+calibratedNegativeCapacity = arealCapacity(negativeTime);
+
+balancingColors = lines(3);
+balancingFigure = figure('Units', 'inches', 'Position', [0.2, 0.2, 7.2, 6.2]);
+hold on;
+grid on;
+plot(initialNegativeCapacity, initialNegativeOcp(1:negativeEndIndex), ...
+    'DisplayName', 'Graphite init', ...
+    'Color', balancingColors(1,:), ...
+    'LineStyle', '--');
+plot(initialPositiveCapacity, initialPositiveOcp(1:positiveEndIndex), ...
+    'DisplayName', 'LNMO init', ...
+    'Color', balancingColors(2,:), ...
+    'LineStyle', '--');
+plot(initialPositiveCapacity, initialCellOcp(1:positiveEndIndex), ...
+    'DisplayName', 'Full Cell init', ...
+    'Color', balancingColors(3,:), ...
+    'LineStyle', '--');
+plot(calibratedNegativeCapacity, calibratedNegativeOcp, ...
+    'DisplayName', 'Graphite opt', 'Color', balancingColors(1,:));
+plot(experimentalCapacity, calibratedPositiveOcp, ...
+    'DisplayName', 'LNMO opt', 'Color', balancingColors(2,:));
+plot(experimentalCapacity, calibratedCellOcp, ...
+    'DisplayName', 'Full Cell opt', 'Color', balancingColors(3,:));
+plot(experimentalCapacity, expdata.U, 'k:', 'DisplayName', 'Experiment 0.05 C');
+xlabel('Capacity / mAh cm^{-2}');
+ylabel('Voltage / V');
+title('Figure 12. Cell balancing under equilibrium assumption');
+legend('Location', 'southwest');
+axis tight;
+breakyaxis([1.5, 3]);
+
+if dosave
+    figureFilename = 'figure-12-cell-balancing-under-equilibrium-assumption';
+    saveFigureSet(balancingFigure, fullfile(scriptDirectory, figureFilename));
+end
+
 diary off;
 
 %{
