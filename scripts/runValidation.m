@@ -6,7 +6,7 @@ close all
 mrstDebug(0);
 
 ctrl = 'Control';
-dosave = false;
+dosave = true;
 scriptDirectory = fileparts(mfilename('fullpath'));
 
 getTime = @(states) cellfun(@(s) s.time, states);

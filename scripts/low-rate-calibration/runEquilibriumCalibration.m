@@ -112,7 +112,7 @@ legend('location', 'sw')
 axis tight
 ylim([3.45, 4.9])
 
-dosave = false;
+dosave = true;
 if dosave
     exportgraphics(fig, fullfile(scriptDirectory, 'cell-balancing.png'), 'resolution', 300);
 end
