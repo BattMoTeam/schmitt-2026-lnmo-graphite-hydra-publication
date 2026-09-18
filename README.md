@@ -98,6 +98,33 @@ python -m pip install -r requirements.txt
 python -m unittest discover -s tests -p test_battmo_jsonld.py
 ```
 
+Convert the merged calibrated BattMo parameters to BPX with:
+
+```sh
+python scripts/convert_from_battmo_to_bpx.py
+```
+
+This writes `parameters/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.bpx.json`
+and validates it against the [BPX 1.0 schema](https://github.com/FaradayInstitution/BPX)
+before writing. The converter reads numerical model parameters from the merged
+`IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.json`, without re-merging
+calibration files. It also reads `h0b-geometry-3d.json` for pouch geometry and the four
+referenced OCP and exchange-current MATLAB tables in the input directory. It supports
+these HYDRA functions and the Nyman electrolyte functions, rather than arbitrary MATLAB code.
+
+Use `--input`, `--output`, `--geometry`, and `--functions-dir` to override those paths.
+The supplementary publication defaults, absent from the merged JSON, are 1 A.h nominal
+capacity and 4.9 V upper cutoff; override them with `--nominal-capacity` and `--upper-cutoff`.
+Conversion is isothermal, with reference temperature 298.15 K. External area and volume
+are estimated from the rectangular electrode stack, excluding tabs and packaging.
+Measurements are optional: `--validation-data raw-data/TE_1473.mat` embeds discharge curves.
+The converter performs schema validation; the comparison script below runs PyBaMM.
+Dependencies are in `requirements.txt`; `bpx==0.5.0` implements the BPX 1.0 layout used here.
+
+```sh
+python -m unittest discover -s tests -p test_battmo_bpx.py
+```
+
 To export the BattMo validation reference curves from MATLAB, do
 ```matlab
 startup
@@ -108,11 +135,11 @@ Then compare BattMo and PyBaMM with
 python scripts/compare_battmo_pybamm.py
 ```
 Some BattMo-specific features cannot be represented exactly in standard BPX:
-- the graphite negative-electrode `j0(soc)` table
+- both electrodes’ `j0(soc)` tables
 - independent volumetric surface area and active-material volume fraction
 - cathode OCP boundary behavior outside the first tabulated stoichiometry point
 Accordingly:
-- the graphite `j0(soc)` data is approximated by a single BPX reaction-rate constant
+- each `j0(soc)` table is approximated by a least-squares BPX reaction-rate constant at nominal electrolyte concentration; BPX adds concentration dependence absent from these BattMo tables
 - BattMo surface-area scaling is folded into exported reaction-rate constants
 - the cathode OCP table includes a boundary extrapolation
 
