@@ -1,21 +1,13 @@
 % Script to validate the calibrated P2D model at different rates
 
-clear all
+clearvars
 close all
 
 mrstDebug(0);
 
-set(0, 'defaultlinelinewidth', 2)
-set(0, 'defaulttextfontsize', 15);
-set(0, 'defaultaxesfontsize', 15);
-
-am   = 'ActiveMaterial';
-itf  = 'Interface';
-pe   = 'PositiveElectrode';
-ne   = 'NegativeElectrode';
-co   = 'Coating';
-sd   = 'SolidDiffusion';
 ctrl = 'Control';
+dosave = false;
+scriptDirectory = fileparts(mfilename('fullpath'));
 
 getTime = @(states) cellfun(@(s) s.time, states);
 getE = @(states) cellfun(@(s) s.(ctrl).E, states);
@@ -35,43 +27,48 @@ jsonstructHRC = parseBattmoJson(filename);
 
 % Find capacity
 input     = struct('lowRateParams', jsonstructEC, ...
-                   'include_current_collectors', true);
+    'include_current_collectors', true);
 outputCap = runHydra(input, 'runSimulation', false);
 cap       = computeCellCapacity(outputCap.model);
 
 fig = figure('Units', 'inches', 'Position', [0.1, 0.1, 8, 6]);
 hold on;
 colors = lines(numel(dataraw.time));
-expname = @(c) sprintf('exp %1.2gC', c);
-p2dname = @(c) sprintf('P2D %1.2gC', c);
-
 rates = [0.05, 0.2, 0.5, 1, 2];
+numExperiments = numel(dataraw.time);
+assert(numExperiments == numel(rates), ...
+    'The number of experiments must match the number of expected rates.');
 RMSE = nan(size(rates));
+hp2d = gobjects(1, numExperiments);
 
-for k = 1:numel(dataraw.time)
+for k = 1:numExperiments
 
     expdata = struct('time', dataraw.time{k} * hour, ...
-                     'U'   , dataraw.voltage{k}    , ...
-                     'I'   , abs(mean(dataraw.current{k})));
+        'U', dataraw.voltage{k}, ...
+        'I', abs(mean(dataraw.current{k})));
 
-    DRate = expdata.I / cap * hour;
+    % Convert measured current to C-rate using the calibrated cell capacity.
+    dischargeRate = expdata.I / cap * hour;
 
-    assert(abs(DRate - rates(k))/rates(k) < 0.1, 'DRate %g does not match expected rate %g', DRate, rates(k));
+    assert(abs(dischargeRate - rates(k))/rates(k) < 0.1, ...
+        'Discharge rate %g does not match expected rate %g', dischargeRate, rates(k));
 
-    input = struct('DRate'                         , DRate            , ...
-                   'totalTime'                     , expdata.time(end), ...
-                   'lowRateParams'                 , jsonstructEC     , ...
-                   'highRateParams'                , jsonstructHRC    , ...
-                   'useRegionBruggemanCoefficients', true             , ...
-                   'include_current_collectors'    , true);
+    input = struct('DRate', dischargeRate, ...
+        'totalTime', expdata.time(end), ...
+        'lowRateParams', jsonstructEC, ...
+        'highRateParams', jsonstructHRC, ...
+        'useRegionBruggemanCoefficients', true, ...
+        'include_current_collectors', true);
 
     output = runHydra(input, 'clearSimulation', false);
 
-    RMSE(k) = l2error(expdata.time, expdata.U, getTime(output.states), getE(output.states), 'extrap', true);
+    RMSE(k) = l2error(expdata.time, expdata.U, getTime(output.states), getE(output.states), ...
+        'extrap', true);
 
     figure(fig);
     plot(expdata.time/hour * expdata.I, expdata.U, '--', 'color', colors(k,:));
-    hp2d(k) = plot(getTime(output.states)/hour * expdata.I, getE(output.states), 'color', colors(k,:)); %#ok
+    hp2d(k) = plot(getTime(output.states)/hour * expdata.I, getE(output.states), ...
+        'color', colors(k,:));
     drawnow
 
 end
@@ -81,6 +78,7 @@ ylabel('Voltage  /  V')
 axis tight
 ylim([3.45, 4.9])
 
+hp = gobjects(1, 2);
 hp(1) = plot(nan, nan, 'k', 'linestyle', '--');
 hp(2) = plot(nan, nan, 'k', 'linestyle', '-');
 legend(gca(), hp, {'exp', 'P2D'});
@@ -93,9 +91,8 @@ end
 ax = axes('position', get(gca(), 'position'), 'visible', 'off');
 legend(ax, hp2d, legtxt, 'location', 'sw');
 
-dosave = false;
 if dosave
-    exportgraphics(fig, '/tmp/validation.png', 'resolution', 300);
+    exportgraphics(fig, fullfile(scriptDirectory, 'validation.png'), 'resolution', 300);
 end
 
 
