@@ -1,4 +1,4 @@
-% Script to validate the calibrated P2D model at different rates
+% Validate the calibrated P2D model and export curves for cross-tool comparison.
 
 clearvars
 close all
@@ -40,6 +40,7 @@ assert(numExperiments == numel(rates), ...
     'The number of experiments must match the number of expected rates.');
 RMSE = nan(size(rates));
 hp2d = gobjects(1, numExperiments);
+validationCases = cell(numExperiments, 1);
 
 for k = 1:numExperiments
 
@@ -62,12 +63,20 @@ for k = 1:numExperiments
 
     output = runHydra(input, 'clearSimulation', false);
 
-    RMSE(k) = l2error(expdata.time, expdata.U, getTime(output.states), getE(output.states), ...
-        'extrap', true);
+    simulationTime = getTime(output.states);
+    simulationVoltage = getE(output.states);
+    RMSE(k) = l2error(expdata.time, expdata.U, simulationTime, simulationVoltage, 'extrap', true);
+
+    % Export the same states used for the validation plot, without another simulation.
+    validationCases{k} = struct('case_name', sprintf('Discharge rate %d', k), ...
+        'current_a', expdata.I, ...
+        'drate', dischargeRate, ...
+        'experimental', struct('time_s', expdata.time(:)', 'voltage_v', expdata.U(:)'), ...
+        'battmo', struct('time_s', simulationTime(:)', 'voltage_v', simulationVoltage(:)'));
 
     figure(fig);
     plot(expdata.time/hour * expdata.I, expdata.U, '--', 'color', colors(k,:));
-    hp2d(k) = plot(getTime(output.states)/hour * expdata.I, getE(output.states), ...
+    hp2d(k) = plot(simulationTime/hour * expdata.I, simulationVoltage, ...
         'color', colors(k,:));
     drawnow
 
@@ -93,6 +102,24 @@ legend(ax, hp2d, legtxt, 'location', 'sw');
 
 if dosave
     exportgraphics(fig, fullfile(scriptDirectory, 'validation.png'), 'resolution', 300);
+
+    parameterFiles = {'parameters/h0b-base.json', ...
+        'parameters/equilibrium-calibration-parameters.json', ...
+        'parameters/high-rate-calibration-parameters.json'};
+    reference = struct('generated_at', char(datetime('now', 'Format', 'yyyy-MM-dd''T''HH:mm:ss')), ...
+        'source', 'scripts/runValidation.m', ...
+        'matlab_release', version('-release'), ...
+        'capacity_ah', cap / hour, ...
+        'parameter_files', {parameterFiles}, ...
+        'cases', {validationCases});
+
+    outputDirectory = fullfile(getHydra0Dir(), 'figures');
+    if ~isfolder(outputDirectory)
+        mkdir(outputDirectory);
+    end
+    referenceFilename = fullfile(outputDirectory, 'battmo-validation-reference.json');
+    writeStruct(reference, referenceFilename);
+    fprintf('Wrote %s\n', referenceFilename);
 end
 
 

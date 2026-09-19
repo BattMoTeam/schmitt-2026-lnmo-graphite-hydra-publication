@@ -40,10 +40,9 @@ outputInit = runHydra(input, 'clearSimulation', false);
 
 [~, caps] = computeCellCapacity(outputInit.model);
 ne_area = 5.2*centi*5.2*centi;
-ne_num_layers = 2*10;
-ne_eff_area = ne_area * ne_num_layers;
+geom3d = parseBattmoJson(fullfile(getHydra0Dir(), 'parameters', 'h0b-geometry-3d.json'));
 areas = struct(pe, outputInit.jsonstruct.Geometry.faceArea, ...
-               ne, ne_eff_area);
+               ne, ne_area * geom3d.Geometry.nLayers);
 np_ratio = caps.(ne) / caps.(pe) * areas.(ne) / areas.(pe);
 
 ecs = EquilibriumCalibrationSetup(outputInit.model, expdata);

@@ -10,7 +10,6 @@ function startup()
     cwdir = pwd();
     battmo = resolveBattMoPath(repoRoot);
 
-    cleanupObj = onCleanup(@() cd(cwdir)); %#ok<NASGU>
     configurePythonExecutable(repoRoot);
     cd(battmo);
 
@@ -30,11 +29,9 @@ function startup()
     mrstModule add ad-core optimization mpfa
 
     reset(groot);
-    % set(groot, 'DefaultFigureWindowStyle', 'docked')
     set(groot, 'defaultlinelinewidth', 2)
     set(groot, 'defaulttextfontsize', 15);
     set(groot, 'defaultaxesfontsize', 15);
-    % set(groot, 'DefaultAxesTitleFontSizeMultiplier',1.2)
     set(groot, 'DefaultFigurePosition', [100, 100, 560, 420]);
 
     datetime.setDefaultFormats('default','yyyy-MM-dd HH:mm:ss');

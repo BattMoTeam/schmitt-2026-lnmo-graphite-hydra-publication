@@ -7,13 +7,11 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from publication_names import (
-    PUBLICATION_BATTMO_EXPERIMENT_FIGURE_PATH,
-    PUBLICATION_BATTMO_EXPERIMENT_SUMMARY_PATH,
-)
 
 
 ROOT = Path(__file__).resolve().parents[1]
+PUBLICATION_BATTMO_EXPERIMENT_FIGURE_PATH = ROOT / "figures" / "publication" / "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_battmo-vs-experiment.png"
+PUBLICATION_BATTMO_EXPERIMENT_SUMMARY_PATH = ROOT / "figures" / "publication" / "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_battmo-vs-experiment-summary.json"
 FIGURES_DIR = ROOT / "figures"
 
 

@@ -5,10 +5,14 @@ import shutil
 from pathlib import Path
 
 from plotly.offline import get_plotlyjs
-from publication_names import PUBLICATION_BATTMO_PATH, PUBLICATION_BPX_PATH
-
 
 ROOT = Path(__file__).resolve().parents[1]
+PUBLICATION_BPX_PATH = (
+    ROOT / "parameters" / "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.bpx.json"
+)
+PUBLICATION_BATTMO_PATH = (
+    ROOT / "parameters" / "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.json"
+)
 DOCS_DIR = ROOT / "docs"
 DOCS_ASSETS_DIR = DOCS_DIR / "assets"
 DATA_DIR = DOCS_ASSETS_DIR / "data"
@@ -63,7 +67,12 @@ def main() -> None:
     def prepare_text_data(key: str, source: Path, target_name: str) -> dict[str, str]:
         raw_rel = copy_file(source, DATA_DIR / target_name)
         text = load_text(source)
-        script_rel = write_data_script(key, text, DATA_DIR / f"{Path(target_name).stem}.js")
+        script_name = (
+            target_name + ".js"
+            if target_name.endswith(".jsonld")
+            else f"{Path(target_name).stem}.js"
+        )
+        script_rel = write_data_script(key, text, DATA_DIR / script_name)
         return {"path": raw_rel, "script": script_rel, "data_key": key}
 
     data_map = {
@@ -100,11 +109,6 @@ def main() -> None:
             ROOT / "figures" / "supporting" / "battmo-validation-states.json",
             "battmo-validation-states.json",
         ),
-        "rate_study_reference": prepare_json_data(
-            "rate_study_reference",
-            ROOT / "figures" / "rate-study" / "battmo-rate-study-reference.json",
-            "battmo-rate-study-reference.json",
-        ),
     }
 
     publication_gallery = [
@@ -113,12 +117,14 @@ def main() -> None:
             "description": "Cell balancing under equilibrium assumption.",
             "image": copy_file(
                 ROOT / "figures" / "figure-12-cell-balancing-under-equilibrium-assumption.png",
-                IMAGES_DIR / "publication" / "figure-12-cell-balancing-under-equilibrium-assumption.png",
+                IMAGES_DIR
+                / "publication"
+                / "figure-12-cell-balancing-under-equilibrium-assumption.png",
             ),
         },
         {
             "title": "Figure 13",
-            "description": "High-rate calibration at 2C from two different negative-electrode diffusion-coefficient initializations.",
+            "description": "Initial and calibrated responses at 2C using the current six-parameter calibration.",
             "image": copy_file(
                 ROOT / "figures" / "figure-13-high-rate-calibration-at-2C.png",
                 IMAGES_DIR / "publication" / "figure-13-high-rate-calibration-at-2C.png",
@@ -164,33 +170,27 @@ def main() -> None:
                 "description": "Electrolyte, potential, and particle-stoichiometry contour dashboard for the BattMo run.",
                 "image": copy_file(
                     case_dir / f"{case_dir.name}-state-dashboard.png",
-                    IMAGES_DIR / "supporting" / case_dir.name / f"{case_dir.name}-state-dashboard.png",
+                    IMAGES_DIR
+                    / "supporting"
+                    / case_dir.name
+                    / f"{case_dir.name}-state-dashboard.png",
                 ),
             }
         )
 
     fair_documents = [
         {
-            "label": "BattINFO optimization JSON",
-            "description": "Canonical BattINFO-style battery-cell descriptor for the optimization parameterization.",
+            "label": "BattMo validation JSON-LD",
+            "description": "BattINFO/EMMO mappings of the merged validation parameters, with an embedded context and complete sourceData.",
             **prepare_text_data(
-                "fair_optimization_json",
-                ROOT / "linked-data" / "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.json",
-                "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.json",
-            ),
-        },
-        {
-            "label": "Linked-data optimization JSON-LD",
-            "description": "Nested JSON-LD export of the BattINFO cell descriptor with legacy BattMo model-term links preserved via dual typing.",
-            **prepare_text_data(
-                "fair_optimization_jsonld",
-                ROOT / "linked-data" / "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.jsonld",
-                "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.jsonld",
+                "fair_battmo_validation_jsonld",
+                ROOT / "linked-data" / (PUBLICATION_BATTMO_PATH.stem + ".jsonld"),
+                PUBLICATION_BATTMO_PATH.stem + ".jsonld",
             ),
         },
         {
             "label": "Merged BattMo validation parameters",
-            "description": "Single-file BattMo JSON containing the final calibrated parameterization plus the 3D cell geometry used for validation.",
+            "description": "Merged base, equilibrium, and high-rate BattMo parameters; geometry is supplied separately.",
             **prepare_text_data(
                 "fair_battmo_validation_parameters",
                 PUBLICATION_BATTMO_PATH,
@@ -199,7 +199,7 @@ def main() -> None:
         },
         {
             "label": "Publication BPX",
-            "description": "Publication-facing BPX export of the validation parameter set.",
+            "description": "BPX 1.0 parameters with all five measured discharge curves included under Validation.",
             **prepare_text_data(
                 "fair_bpx",
                 PUBLICATION_BPX_PATH,
@@ -209,7 +209,9 @@ def main() -> None:
         {
             "label": "BattMo base parameters",
             "description": "Canonical BattMo base parameter file used by the model workflow.",
-            **prepare_text_data("fair_h0b_base", ROOT / "parameters" / "h0b-base.json", "h0b-base.json"),
+            **prepare_text_data(
+                "fair_h0b_base", ROOT / "parameters" / "h0b-base.json", "h0b-base.json"
+            ),
         },
         {
             "label": "BattMo equilibrium calibration parameters",
@@ -238,7 +240,9 @@ def main() -> None:
 
     manifest = {
         "summary": {
-            "validation_cases": 5,
+            "validation_cases": len(
+                load_json(ROOT / "figures" / "battmo-validation-reference.json")["cases"]
+            ),
             "publication_figures": 3,
             "supporting_dashboards": len(supporting_gallery),
             "fair_documents": len(fair_documents),

@@ -3,7 +3,7 @@
     "validation_cases": 5,
     "publication_figures": 3,
     "supporting_dashboards": 10,
-    "fair_documents": 8
+    "fair_documents": 7
   },
   "vendor": {
     "plotly_bundle": "assets/vendor/plotly.min.js"
@@ -38,11 +38,6 @@
       "path": "assets/data/battmo-validation-states.json",
       "script": "assets/data/battmo-validation-states.js",
       "data_key": "supporting_states"
-    },
-    "rate_study_reference": {
-      "path": "assets/data/battmo-rate-study-reference.json",
-      "script": "assets/data/battmo-rate-study-reference.js",
-      "data_key": "rate_study_reference"
     }
   },
   "publication_gallery": [
@@ -53,7 +48,7 @@
     },
     {
       "title": "Figure 13",
-      "description": "High-rate calibration at 2C from two different negative-electrode diffusion-coefficient initializations.",
+      "description": "Initial and calibrated responses at 2C using the current six-parameter calibration.",
       "image": "assets/images/publication/figure-13-high-rate-calibration-at-2C.png"
     },
     {
@@ -121,29 +116,22 @@
   ],
   "fair_documents": [
     {
-      "label": "BattINFO optimization JSON",
-      "description": "Canonical BattINFO-style battery-cell descriptor for the optimization parameterization.",
-      "path": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.json",
-      "script": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.js",
-      "data_key": "fair_optimization_json"
-    },
-    {
-      "label": "Linked-data optimization JSON-LD",
-      "description": "Nested JSON-LD export of the BattINFO cell descriptor with legacy BattMo model-term links preserved via dual typing.",
-      "path": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.jsonld",
-      "script": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_optimization.js",
-      "data_key": "fair_optimization_jsonld"
+      "label": "BattMo validation JSON-LD",
+      "description": "BattINFO/EMMO mappings of the merged validation parameters, with an embedded context and complete sourceData.",
+      "path": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.jsonld",
+      "script": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.jsonld.js",
+      "data_key": "fair_battmo_validation_jsonld"
     },
     {
       "label": "Merged BattMo validation parameters",
-      "description": "Single-file BattMo JSON containing the final calibrated parameterization plus the 3D cell geometry used for validation.",
+      "description": "Merged base, equilibrium, and high-rate BattMo parameters; geometry is supplied separately.",
       "path": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.json",
       "script": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.js",
       "data_key": "fair_battmo_validation_parameters"
     },
     {
       "label": "Publication BPX",
-      "description": "Publication-facing BPX export of the validation parameter set.",
+      "description": "BPX 1.0 parameters with all five measured discharge curves included under Validation.",
       "path": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.bpx.json",
       "script": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.bpx.js",
       "data_key": "fair_bpx"

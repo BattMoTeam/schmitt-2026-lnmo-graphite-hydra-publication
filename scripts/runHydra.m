@@ -242,7 +242,7 @@ function output = runHydra(input, varargin)
         end
 
         save(inputFilename, 'input');
-        writeStruct(jsonencode(input, 'PrettyPrint', true), jsonInputFilename);
+        writeStruct(input, jsonInputFilename);
 
         if opt.clearSimulation
             clearPackedSimulatorOutput(output.problem, 'Prompt', false);

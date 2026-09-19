@@ -1,6 +1,7 @@
 # Validation Explorer
 
 This page exposes the main BattMo-versus-experiment validation dataset in an interactive form.
+The curves come from `runValidation` using the current equilibrium and high-rate parameter files.
 
 - Use the rate selector to focus on one discharge case or inspect them all together.
 - Hover to read off exact capacity and voltage values.

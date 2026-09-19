@@ -15,11 +15,14 @@ Cell balancing under equilibrium assumption. The interactive view shows the orig
 
 ## Figure 13
 
-Results after high-rate calibration at `2C` using two different initial values for the negative-electrode diffusion coefficient.
+Initial and calibrated responses at `2C`, using the equilibrium-calibrated model and
+the current six-parameter high-rate calibration.
 
 <div id="figure13-plot" class="plot-container plot-large"></div>
 
-<p class="figure-note">The two calibrated curves are expected to lie on top of each other. The interactive view is intended to make that overlap and the initial-condition sensitivity visible without reading the raw simulation output.</p>
+<p class="figure-note">Compare the initial guess, calibrated response, and measured voltage.
+The calibration adjusts the positive-electrode surface area, both solid diffusion
+coefficients, and the three regional electrolyte Bruggeman coefficients.</p>
 
 ## Figure 14
 

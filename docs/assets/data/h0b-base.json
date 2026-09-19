@@ -11,6 +11,7 @@
     "useCVswitch": true
   },
   "Electrolyte": {
+    "bgfactor": 1,
     "bruggemanCoefficient": 1.5,
     "compnames": [
       "Li",
@@ -68,7 +69,7 @@
         },
         "SolidDiffusion": {
           "activationEnergyOfDiffusion": 13820.0,
-          "referenceDiffusionCoefficient": 1e-12,
+          "referenceDiffusionCoefficient": 1e-13,
           "particleRadius": 1.63e-05,
           "N": 10
         },
@@ -78,8 +79,9 @@
       },
       "N": 10,
       "thickness": 5.65e-05,
-      "bruggemanCoefficient": 3.46,
+      "bruggemanCoefficient": 2.3570827297901848,
       "electronicConductivity": 62,
+      "effectiveElectronicConductivity": 62,
       "volumeFraction": 0.61,
       "Binder": {
         "density": 1320,
@@ -118,13 +120,19 @@
             "functionName": "computeOCPcathodeH0b",
             "functionFormat": "named function"
           },
-          "reactionRateConstant": 2.33e-11,
+          "exchangeCurrentDensity": {
+            "argumentList": [
+              "soc"
+            ],
+            "functionName": "computeJ0cathodeH0b",
+            "functionFormat": "named function"
+          },
           "saturationConcentration": 23761,
           "volumetricSurfaceArea": 2520000.0
         },
         "SolidDiffusion": {
           "activationEnergyOfDiffusion": 5630.0,
-          "referenceDiffusionCoefficient": 1e-12,
+          "referenceDiffusionCoefficient": 1e-14,
           "particleRadius": 8.94e-06,
           "N": 10
         },
@@ -134,8 +142,9 @@
       },
       "N": 10,
       "thickness": 7.65e-05,
-      "bruggemanCoefficient": 3,
+      "bruggemanCoefficient": 1.9818678700163161,
       "electronicConductivity": 18,
+      "effectiveElectronicConductivity": 18,
       "volumeFraction": 0.66,
       "Binder": {
         "density": 1800,
@@ -159,7 +168,7 @@
     }
   },
   "Separator": {
-    "bruggemanCoefficient": 4.2,
+    "bruggemanCoefficient": 2.9552381408013648,
     "density": 946,
     "porosity": 0.48,
     "thickness": 2.5e-05,

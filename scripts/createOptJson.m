@@ -22,7 +22,9 @@ jsonOpt = rmfield(jsonOpt, 'Control');
 % Compare
 filename = fullfile(getHydra0Dir(), 'parameters', 'h0b-base.json');
 jsonBase = parseBattmoJson(filename);
-json00 = mergeStructs({jsonstructEC, jsonstructHRC, jsonBase});
+json00 = mergeStructs({jsonstructHRC, jsonstructEC, jsonBase});
+% Preserve the validation transport setting in the unscaled parameter export.
+json00.Electrolyte.useRegionBruggemanCoefficients = true;
 
 jsonDiff(jsonOpt, json00, 'opt', '00');
 

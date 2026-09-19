@@ -429,10 +429,8 @@ async function initPublicationFigures(manifest) {
       fig13Plot,
       [
         { x: fig13.experiment.time_h, y: fig13.experiment.voltage_v, mode: "lines", name: "Experiment 2C", line: { dash: "dash", width: 2 } },
-        { x: fig13.initial_guess_dne_1e_14.time_h, y: fig13.initial_guess_dne_1e_14.voltage_v, mode: "lines", name: "Initial D_NE=1e-14", line: { width: 2 } },
-        { x: fig13.initial_guess_dne_1e_13.time_h, y: fig13.initial_guess_dne_1e_13.voltage_v, mode: "lines", name: "Initial D_NE=1e-13", line: { width: 2 } },
-        { x: fig13.calibrated_from_dne_1e_14.time_h, y: fig13.calibrated_from_dne_1e_14.voltage_v, mode: "lines", name: "Calibrated from 1e-14", line: { width: 2.5 } },
-        { x: fig13.calibrated_from_dne_1e_13.time_h, y: fig13.calibrated_from_dne_1e_13.voltage_v, mode: "lines", name: "Calibrated from 1e-13", line: { dash: "dash", width: 2.5 } },
+        { x: fig13.initial.time_h, y: fig13.initial.voltage_v, mode: "lines", name: "Initial guess", line: { width: 2 } },
+        { x: fig13.calibrated.time_h, y: fig13.calibrated.voltage_v, mode: "lines", name: "Calibrated", line: { width: 2.5 } },
       ],
       withPlotHeight(fig13Plot, rightLegendLayout("High-rate calibration at 2C", "Time / h", "Voltage / V")),
       plotConfig(),
@@ -467,7 +465,7 @@ async function initSupportingRuns(manifest) {
   const heatmapPlot = byId("supporting-state-heatmap");
   const gallery = byId("supporting-gallery");
 
-  if (!caseSelect || !variableSelect || !metaDiv || !voltagePlot || !heatmapPlot || !gallery) {
+  if (!caseSelect || !variableSelect || !metaDiv || !voltagePlot || !heatmapPlot) {
     return;
   }
 
@@ -538,6 +536,10 @@ async function initSupportingRuns(manifest) {
         },
       ],
       withPlotHeight(heatmapPlot, baseLayout(`${caseEntry.case_name}: ${variable.label}`, "Time / h", "x / um", {
+        title: {
+          text: `${caseEntry.case_name}<br>${variable.label}`,
+          font: { color: palette.font, size: 16 },
+        },
         xaxis: Object.assign(baseAxis("Time / h", palette), { nticks: 6, tickangle: 0 }),
         yaxis: Object.assign(baseAxis("x / um", palette), { nticks: 6 }),
         margin: { t: 72, r: 84, b: 88, l: 84 },
@@ -556,9 +558,11 @@ async function initSupportingRuns(manifest) {
   }
   await render();
 
-  gallery.innerHTML = manifest.supporting_gallery
-    .map((item) => createGalleryCard(item.title, item.description, item.image))
-    .join("");
+  if (gallery) {
+    gallery.innerHTML = manifest.supporting_gallery
+      .map((item) => createGalleryCard(item.title, item.description, item.image))
+      .join("");
+  }
 }
 
 async function initFairData(manifest) {

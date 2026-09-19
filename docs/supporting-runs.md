@@ -1,6 +1,7 @@
 # Supporting Runs
 
 This page exposes the per-run BattMo supporting data that sits behind the validation figures.
+The voltage curves and state fields use the same calibrated parameters as the validation explorer.
 
 - Select a discharge case to inspect its voltage curve and state evolution.
 - Switch between electrolyte, solid potential, and particle-stoichiometry fields.

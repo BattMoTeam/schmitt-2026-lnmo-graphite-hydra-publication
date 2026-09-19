@@ -1,4 +1,4 @@
-# Python dependencies for interoperability workflows and linked-data validation.
+# Python dependencies for interoperability workflows.
 # Install with:
 #   python -m pip install -r requirements.txt
 
@@ -7,8 +7,4 @@ pybamm[bpx]
 bpx==0.5.0
 numpy
 scipy
-h5py
 matplotlib
-
-# JSON-LD regression validation. convert_from_battmo_to_jsonld.py itself uses only the standard library.
-PyLD

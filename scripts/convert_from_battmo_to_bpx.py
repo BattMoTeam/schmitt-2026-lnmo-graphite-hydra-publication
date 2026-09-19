@@ -9,10 +9,9 @@ import numpy as np
 from bpx import parse_bpx_obj
 from scipy.io import loadmat
 
-
-
 ROOT = Path(__file__).resolve().parents[1]
 PARAMETERS_DIR = ROOT / "parameters"
+VALIDATION_DATA = ROOT / "raw-data" / "TE_1473.mat"
 DEFAULT_INPUT = PARAMETERS_DIR / "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.json"
 DEFAULT_OUTPUT = PARAMETERS_DIR / "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.bpx.json"
 
@@ -33,7 +32,18 @@ def parse_matlab_table(path: Path) -> np.ndarray:
         if not line:
             continue
         rows.append([float(item) for item in line.split()])
-    return np.array(rows, dtype=float)
+    table = np.array(rows, dtype=float)
+    if (
+        table.ndim != 2
+        or table.shape[1] != 2
+        or len(table) < 2
+        or not np.isfinite(table).all()
+        or not np.all(np.diff(table[:, 0]) > 0)
+    ):
+        raise ValueError(
+            f"Expected a finite two-column table with increasing coordinates in {path}"
+        )
+    return table
 
 
 def extend_table_to_unit_interval(table: np.ndarray) -> np.ndarray:
@@ -75,42 +85,37 @@ def compute_active_fraction_within_solids(
     active_specific_volume = active_mass_fraction / active_density
     binder_specific_volume = binder_mass_fraction / binder_density
     additive_specific_volume = additive_mass_fraction / additive_density
-    solid_specific_volume = active_specific_volume + binder_specific_volume + additive_specific_volume
+    solid_specific_volume = (
+        active_specific_volume + binder_specific_volume + additive_specific_volume
+    )
     return active_specific_volume / solid_specific_volume
-
-
-def compute_porosity(total_solid_volume_fraction: float) -> float:
-    return 1.0 - total_solid_volume_fraction
-
-
-def compute_effective_conductivity(conductivity: float, total_solid_volume_fraction: float, bruggeman: float) -> float:
-    return conductivity * total_solid_volume_fraction**bruggeman
-
-
-def transport_efficiency(porosity: float, bruggeman: float) -> float:
-    return porosity**bruggeman
-
-
-def compute_geometric_surface_area_per_unit_volume(active_volume_fraction: float, particle_radius: float) -> float:
-    return 3.0 * active_volume_fraction / particle_radius
 
 
 def fit_bpx_reaction_rate_constant(
     j0_table: np.ndarray, theta_min: float, theta_max: float, surface_area_scale: float
 ) -> float:
+    """Least-squares fit of j0 = F*K*sqrt(theta*(1-theta)) at nominal ce.
+
+    BattMo's tabulated currents are A/cm2. The area ratio preserves the
+    volumetric reaction strength while BPX uses spherical-particle geometry.
+    """
     faraday = 96485.33212
     soc = j0_table[:, 0]
     j0 = j0_table[:, 1] * 1e4 * surface_area_scale
     sto = theta_min + soc * (theta_max - theta_min)
     mask = (sto > 0.0) & (sto < 1.0)
+    if not np.any(mask):
+        raise ValueError("No interior stoichiometry samples for kinetic fit")
     basis = faraday * np.sqrt(sto[mask] * (1.0 - sto[mask]))
     return float(np.dot(basis, j0[mask]) / np.dot(basis, basis))
 
 
-def load_validation_data(path: Path) -> dict:
-    experiment = loadmat(path, squeeze_me=True, struct_as_record=False)["experiment"]
+def load_validation_data() -> dict:
+    experiment = loadmat(VALIDATION_DATA, squeeze_me=True, struct_as_record=False)["experiment"]
     validation = {}
-    for idx, (time_h, current, voltage) in enumerate(zip(experiment.time, experiment.current, experiment.voltage), start=1):
+    for idx, (time_h, current, voltage) in enumerate(
+        zip(experiment.time, experiment.current, experiment.voltage), start=1
+    ):
         time_s = np.asarray(time_h, dtype=float) * 3600.0
         current_a = -np.asarray(current, dtype=float)
         voltage_v = np.asarray(voltage, dtype=float)
@@ -129,7 +134,6 @@ def build_bpx_dict(
     functions_dir: Path | None = None,
     nominal_capacity: float = 1.0,
     upper_cutoff: float = 4.9,
-    validation_data: Path | None = None,
 ) -> dict:
     """Convert the HYDRA single-active-material, isothermal parameter set to BPX 1.0."""
     params = load_json(input_path)
@@ -143,12 +147,16 @@ def build_bpx_dict(
         interface = params[region]["Coating"]["ActiveMaterial"]["Interface"]
         if interface["chargeTransferCoefficient"] != 0.5:
             raise ValueError("BPX conversion requires symmetric Butler-Volmer kinetics (alpha=0.5)")
-        for field, name in [("openCircuitPotential", f"computeOCP{suffix}H0b"),
-                            ("exchangeCurrentDensity", f"computeJ0{suffix}H0b")]:
+        for field, name in [
+            ("openCircuitPotential", f"computeOCP{suffix}H0b"),
+            ("exchangeCurrentDensity", f"computeJ0{suffix}H0b"),
+        ]:
             if interface[field].get("functionName") != name:
                 raise ValueError(f"Unsupported {region} {field}: expected {name}")
-    for field, name in [("diffusionCoefficient", "computeDiffusionCoefficient_Nyman2008"),
-                        ("ionicConductivity", "computeElectrolyteConductivity_Nyman2008")]:
+    for field, name in [
+        ("diffusionCoefficient", "computeDiffusionCoefficient_Nyman2008"),
+        ("ionicConductivity", "computeElectrolyteConductivity_Nyman2008"),
+    ]:
         if params["Electrolyte"][field].get("functionName") != name:
             raise ValueError(f"Unsupported electrolyte function: {field}")
 
@@ -179,43 +187,50 @@ def build_bpx_dict(
     )
     neg_active = neg_total_solid * neg_active_share
     pos_active = pos_total_solid * pos_active_share
-    neg_porosity = compute_porosity(neg_total_solid)
-    pos_porosity = compute_porosity(pos_total_solid)
+    neg_porosity = 1.0 - neg_total_solid
+    pos_porosity = 1.0 - pos_total_solid
 
-    region_bruggeman = elyte["regionBruggemanCoefficients"] if elyte.get(
-        "useRegionBruggemanCoefficients", False
-    ) else dict.fromkeys(
-        ["NegativeElectrode", "PositiveElectrode", "Separator"], elyte["bruggemanCoefficient"]
+    region_bruggeman = (
+        elyte["regionBruggemanCoefficients"]
+        if elyte.get("useRegionBruggemanCoefficients", False)
+        else dict.fromkeys(
+            ["NegativeElectrode", "PositiveElectrode", "Separator"], elyte["bruggemanCoefficient"]
+        )
     )
-    neg_transport = transport_efficiency(
-        neg_porosity, region_bruggeman["NegativeElectrode"]
-    )
-    pos_transport = transport_efficiency(
-        pos_porosity, region_bruggeman["PositiveElectrode"]
-    )
-    sep_transport = transport_efficiency(
-        sep["porosity"], region_bruggeman["Separator"]
-    )
+    neg_transport = neg_porosity ** region_bruggeman["NegativeElectrode"]
+    pos_transport = pos_porosity ** region_bruggeman["PositiveElectrode"]
+    sep_transport = sep["porosity"] ** region_bruggeman["Separator"]
+    neg_conductivity = neg.get("effectiveElectronicConductivity")
+    if neg_conductivity is None:
+        neg_conductivity = (
+            neg["electronicConductivity"] * neg_total_solid ** neg["bruggemanCoefficient"]
+        )
+    pos_conductivity = pos.get("effectiveElectronicConductivity")
+    if pos_conductivity is None:
+        pos_conductivity = (
+            pos["electronicConductivity"] * pos_total_solid ** pos["bruggemanCoefficient"]
+        )
 
-    neg_conductivity = neg.get("effectiveElectronicConductivity", compute_effective_conductivity(
-        neg["electronicConductivity"], neg_total_solid, neg["bruggemanCoefficient"]
-    ))
-    pos_conductivity = pos.get("effectiveElectronicConductivity", compute_effective_conductivity(
-        pos["electronicConductivity"], pos_total_solid, pos["bruggemanCoefficient"]
-    ))
-
-    neg_ocp = extend_table_to_unit_interval(parse_matlab_table(functions_dir / "computeOCPanodeH0b.m"))
-    pos_ocp = extend_table_to_unit_interval(parse_matlab_table(functions_dir / "computeOCPcathodeH0b.m"))
+    neg_ocp = extend_table_to_unit_interval(
+        parse_matlab_table(functions_dir / "computeOCPanodeH0b.m")
+    )
+    pos_ocp = extend_table_to_unit_interval(
+        parse_matlab_table(functions_dir / "computeOCPcathodeH0b.m")
+    )
     neg_j0 = parse_matlab_table(functions_dir / "computeJ0anodeH0b.m")
 
     pos_j0 = parse_matlab_table(functions_dir / "computeJ0cathodeH0b.m")
 
     neg_radius = neg["ActiveMaterial"]["SolidDiffusion"]["particleRadius"]
     pos_radius = pos["ActiveMaterial"]["SolidDiffusion"]["particleRadius"]
-    neg_surface_area_geom = compute_geometric_surface_area_per_unit_volume(neg_active, neg_radius)
-    pos_surface_area_geom = compute_geometric_surface_area_per_unit_volume(pos_active, pos_radius)
-    neg_surface_area_scale = neg["ActiveMaterial"]["Interface"]["volumetricSurfaceArea"] / neg_surface_area_geom
-    pos_surface_area_scale = pos["ActiveMaterial"]["Interface"]["volumetricSurfaceArea"] / pos_surface_area_geom
+    neg_surface_area_geom = 3.0 * neg_active / neg_radius
+    pos_surface_area_geom = 3.0 * pos_active / pos_radius
+    neg_surface_area_scale = (
+        neg["ActiveMaterial"]["Interface"]["volumetricSurfaceArea"] / neg_surface_area_geom
+    )
+    pos_surface_area_scale = (
+        pos["ActiveMaterial"]["Interface"]["volumetricSurfaceArea"] / pos_surface_area_geom
+    )
 
     neg_theta_min = neg["ActiveMaterial"]["Interface"]["guestStoichiometry0"]
     neg_theta_max = neg["ActiveMaterial"]["Interface"]["guestStoichiometry100"]
@@ -234,7 +249,7 @@ def build_bpx_dict(
     )
 
     concentration_grid = np.linspace(0.0, 3000.0, 301)
-    validation = load_validation_data(validation_data) if validation_data else {}
+    validation = load_validation_data()
 
     electrode_pair_area = geometry["width"] * geometry["length"]
     stack_thickness = geometry["nLayers"] * (
@@ -272,7 +287,9 @@ def build_bpx_dict(
                 "Electrode area [m2]": electrode_pair_area,
                 "External surface area [m2]": external_surface_area,
                 "Volume [m3]": cell_volume,
-                "Number of electrode pairs connected in parallel to make a cell": geometry["nLayers"],
+                "Number of electrode pairs connected in parallel to make a cell": geometry[
+                    "nLayers"
+                ],
                 "Lower voltage cut-off [V]": ctrl["lowerCutoffVoltage"],
                 "Upper voltage cut-off [V]": upper_cutoff,
                 "Nominal cell capacity [A.h]": nominal_capacity,
@@ -285,11 +302,17 @@ def build_bpx_dict(
                 "Cation transference number": elyte["species"]["transferenceNumber"],
                 "Diffusivity [m2.s-1]": {
                     "x": concentration_grid.tolist(),
-                    "y": (elyte.get("bgfactor", 1.0) * electrolyte_diffusivity_nyman2008(concentration_grid)).tolist(),
+                    "y": (
+                        elyte.get("bgfactor", 1.0)
+                        * electrolyte_diffusivity_nyman2008(concentration_grid)
+                    ).tolist(),
                 },
                 "Conductivity [S.m-1]": {
                     "x": concentration_grid.tolist(),
-                    "y": (elyte.get("bgfactor", 1.0) * electrolyte_conductivity_nyman2008(concentration_grid)).tolist(),
+                    "y": (
+                        elyte.get("bgfactor", 1.0)
+                        * electrolyte_conductivity_nyman2008(concentration_grid)
+                    ).tolist(),
                 },
             },
             "Negative electrode": {
@@ -299,11 +322,17 @@ def build_bpx_dict(
                 "Conductivity [S.m-1]": neg_conductivity,
                 "Minimum stoichiometry": neg_theta_min,
                 "Maximum stoichiometry": neg_theta_max,
-                "Maximum concentration [mol.m-3]": neg["ActiveMaterial"]["Interface"]["saturationConcentration"],
+                "Maximum concentration [mol.m-3]": neg["ActiveMaterial"]["Interface"][
+                    "saturationConcentration"
+                ],
                 "Particle radius [m]": neg_radius,
                 "Surface area per unit volume [m-1]": neg_surface_area_geom,
-                "Diffusivity [m2.s-1]": neg["ActiveMaterial"]["SolidDiffusion"]["referenceDiffusionCoefficient"],
-                "Diffusivity activation energy [J.mol-1]": neg["ActiveMaterial"]["SolidDiffusion"]["activationEnergyOfDiffusion"],
+                "Diffusivity [m2.s-1]": neg["ActiveMaterial"]["SolidDiffusion"][
+                    "referenceDiffusionCoefficient"
+                ],
+                "Diffusivity activation energy [J.mol-1]": neg["ActiveMaterial"]["SolidDiffusion"][
+                    "activationEnergyOfDiffusion"
+                ],
                 "OCP [V]": {"x": neg_ocp[:, 0].tolist(), "y": neg_ocp[:, 1].tolist()},
                 "Entropic change coefficient [V.K-1]": 0.0,
                 "Reaction rate constant [mol.m-2.s-1]": neg_k_bpx,
@@ -315,11 +344,17 @@ def build_bpx_dict(
                 "Conductivity [S.m-1]": pos_conductivity,
                 "Minimum stoichiometry": pos_theta_min,
                 "Maximum stoichiometry": pos_theta_max,
-                "Maximum concentration [mol.m-3]": pos["ActiveMaterial"]["Interface"]["saturationConcentration"],
+                "Maximum concentration [mol.m-3]": pos["ActiveMaterial"]["Interface"][
+                    "saturationConcentration"
+                ],
                 "Particle radius [m]": pos_radius,
                 "Surface area per unit volume [m-1]": pos_surface_area_geom,
-                "Diffusivity [m2.s-1]": pos["ActiveMaterial"]["SolidDiffusion"]["referenceDiffusionCoefficient"],
-                "Diffusivity activation energy [J.mol-1]": pos["ActiveMaterial"]["SolidDiffusion"]["activationEnergyOfDiffusion"],
+                "Diffusivity [m2.s-1]": pos["ActiveMaterial"]["SolidDiffusion"][
+                    "referenceDiffusionCoefficient"
+                ],
+                "Diffusivity activation energy [J.mol-1]": pos["ActiveMaterial"]["SolidDiffusion"][
+                    "activationEnergyOfDiffusion"
+                ],
                 "OCP [V]": {"x": pos_ocp[:, 0].tolist(), "y": pos_ocp[:, 1].tolist()},
                 "Entropic change coefficient [V.K-1]": 0.0,
                 "Reaction rate constant [mol.m-2.s-1]": pos_k_bpx,
@@ -341,8 +376,12 @@ def build_bpx_dict(
                 "Positive electrode inactive solid volume fraction": pos_total_solid - pos_active,
                 "Open-circuit voltage at 0% SOC [V]": ocv_0,
                 "Open-circuit voltage at 100% SOC [V]": ocv_100,
-                "BattMo negative electrode volumetric surface area [m-1]": neg["ActiveMaterial"]["Interface"]["volumetricSurfaceArea"],
-                "BattMo positive electrode volumetric surface area [m-1]": pos["ActiveMaterial"]["Interface"]["volumetricSurfaceArea"],
+                "BattMo negative electrode volumetric surface area [m-1]": neg["ActiveMaterial"][
+                    "Interface"
+                ]["volumetricSurfaceArea"],
+                "BattMo positive electrode volumetric surface area [m-1]": pos["ActiveMaterial"][
+                    "Interface"
+                ]["volumetricSurfaceArea"],
                 "BPX negative electrode surface area per unit volume [m-1]": neg_surface_area_geom,
                 "BPX positive electrode surface area per unit volume [m-1]": pos_surface_area_geom,
                 "BattMo negative electrode exchange-current density j0 [A.m-2]": {
@@ -365,21 +404,24 @@ def main() -> None:
     parser.add_argument("--input", type=Path, default=DEFAULT_INPUT)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--geometry", type=Path, default=PARAMETERS_DIR / "h0b-geometry-3d.json")
-    parser.add_argument("--functions-dir", type=Path, help="MATLAB tables; defaults to input directory")
-    parser.add_argument("--nominal-capacity", type=float, default=1.0, help="Nominal capacity [A.h]")
+    parser.add_argument(
+        "--functions-dir", type=Path, help="MATLAB tables; defaults to input directory"
+    )
+    parser.add_argument(
+        "--nominal-capacity", type=float, default=1.0, help="Nominal capacity [A.h]"
+    )
     parser.add_argument("--upper-cutoff", type=float, default=4.9, help="Upper voltage cutoff [V]")
-    parser.add_argument("--validation-data", type=Path, help="Optional TE_1473.mat measurements")
     args = parser.parse_args()
-    protected = [args.input, args.geometry]
-    if args.validation_data:
-        protected.append(args.validation_data)
+    protected = [args.input, args.geometry, VALIDATION_DATA]
     if args.output.resolve() in [path.resolve() for path in protected]:
         parser.error("Output must not overwrite an input file")
     try:
         converted = build_bpx_dict(
-            args.input, args.geometry, functions_dir=args.functions_dir,
-            nominal_capacity=args.nominal_capacity, upper_cutoff=args.upper_cutoff,
-            validation_data=args.validation_data,
+            args.input,
+            args.geometry,
+            functions_dir=args.functions_dir,
+            nominal_capacity=args.nominal_capacity,
+            upper_cutoff=args.upper_cutoff,
         )
         # Validate the complete document before creating or replacing the output.
         validated = parse_bpx_obj(converted).model_dump(by_alias=True, exclude_none=True)
