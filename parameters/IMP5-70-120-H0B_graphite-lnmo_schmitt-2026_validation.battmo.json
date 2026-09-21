@@ -77,13 +77,13 @@
           "activationEnergyOfDiffusion": 13820.0,
           "referenceDiffusionCoefficient": 1.427274075108708e-13,
           "particleRadius": 1.63e-05,
-          "N": 10
+          "numberOfDiscreteCells": 10
         },
         "density": 2250,
         "diffusionModelType": "full",
         "massFraction": 0.96
       },
-      "N": 10,
+      "numberOfDiscreteCells": 10,
       "thickness": 5.65e-05,
       "bruggemanCoefficient": 2.357082729790185,
       "electronicConductivity": 62,
@@ -107,7 +107,7 @@
       "specificHeatCapacity": 385,
       "density": 8960,
       "thickness": 1e-05,
-      "N": 10
+      "numberOfDiscreteCells": 10
     }
   },
   "PositiveElectrode": {
@@ -140,13 +140,13 @@
           "activationEnergyOfDiffusion": 5630.0,
           "referenceDiffusionCoefficient": 3.4596783175571784e-14,
           "particleRadius": 8.94e-06,
-          "N": 10
+          "numberOfDiscreteCells": 10
         },
         "density": 4200,
         "diffusionModelType": "full",
         "massFraction": 0.92
       },
-      "N": 10,
+      "numberOfDiscreteCells": 10,
       "thickness": 7.65e-05,
       "bruggemanCoefficient": 1.9818678700163161,
       "electronicConductivity": 18,
@@ -170,7 +170,7 @@
       "specificHeatCapacity": 875.0,
       "density": 2700,
       "thickness": 2e-05,
-      "N": 10
+      "numberOfDiscreteCells": 10
     }
   },
   "Separator": {
@@ -178,6 +178,6 @@
     "density": 946,
     "porosity": 0.48,
     "thickness": 2.5e-05,
-    "N": 10
+    "numberOfDiscreteCells": 10
   }
 }
