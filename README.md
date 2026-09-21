@@ -118,9 +118,9 @@ export the merged calibrated parameters to
 `parameters/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.json`.
 This is a separate step from `runReproduction`.
 
-Typical durations are `1 - 3 h` for full reproduction, `2 - 10 min`
-for equilibrium calibration, `45 - 180 min` for high-rate calibration,
-and `5 - 15 min` for validation.
+Typical durations are `1 - 2 h` for full reproduction, `1 min`
+for equilibrium calibration, `1 - 2 hrs` for high-rate calibration,
+and `1 - 2 min` for validation.
 
 For Python validation, run `python run-validation.py` after
 `runValidation` or `runReproduction` (typical duration: `5 - 15
