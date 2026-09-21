@@ -12,6 +12,9 @@ mrstDebug(0);
 pe   = 'PositiveElectrode';
 ne   = 'NegativeElectrode';
 ctrl = 'Control';
+am   = 'ActiveMaterial';
+itf  = 'Interface';
+co   = 'Coating';
 
 getTime = @(states) cellfun(@(s) s.time, states);
 getE = @(states) cellfun(@(s) s.(ctrl).E, states);
@@ -121,78 +124,77 @@ fprintf('RMSE after calibration: %g mV\n', RMSE/milli);
 
 %% Plot electrode and full-cell OCPs before and after cell balancing
 
-experimentalTime = expdata.time(:);
-experimentDuration = experimentalTime(end) - experimentalTime(1);
-extendedTime = linspace(experimentalTime(1), ...
-    experimentalTime(end) + 0.4 * experimentDuration, numel(experimentalTime))';
+expTime = expdata.time(:);
+experimentDuration = expTime(end) - expTime(1);
+extendedTime = linspace(expTime(1), expTime(end) + 0.4 * experimentDuration, numel(expTime))';
 
 % Use the same calibration coordinates as the optimization, without new simulations.
-[initialCellOcp, initialPositiveOcp, initialNegativeOcp] = ecs.computeF(extendedTime, X0);
-[calibratedCellOcp, calibratedPositiveOcp] = ecs.computeF(experimentalTime, Xopt);
+[initCellOCP, initpeOCP, initneOCP] = ecs.computeF(extendedTime, X0);
+[calibratedCellOCP, calibratedpeOCP] = ecs.computeF(expTime, Xopt);
 
-negativeInterface = outputInit.jsonstruct.NegativeElectrode.Coating.ActiveMaterial.Interface;
-positiveInterface = outputInit.jsonstruct.PositiveElectrode.Coating.ActiveMaterial.Interface;
-negativeOcpLimit = computeOCPanodeH0b(negativeInterface.guestStoichiometry0);
-positiveOcpLimit = computeOCPcathodeH0b(positiveInterface.guestStoichiometry0);
+neInterface = outputInit.jsonstruct.(ne).(co).(am).(itf);
+peInterface = outputInit.jsonstruct.(pe).(co).(am).(itf);
+neOCPLimit = computeOCPanodeH0b(neInterface.guestStoichiometry0);
+peOCPLimit = computeOCPcathodeH0b(peInterface.guestStoichiometry0);
 
-% Retain curves up to the initial electrode discharge limits. If a limit is not
+% Retain curves up to the init electrode discharge limits. If a limit is not
 % reached in the extended window, retain the available curve instead of an empty slice.
-positiveEndIndex = find(initialPositiveOcp <= positiveOcpLimit, 1, 'first');
-if isempty(positiveEndIndex)
-    positiveEndIndex = numel(extendedTime);
+peEndIndex = find(initpeOCP <= peOCPLimit, 1, 'first');
+if isempty(peEndIndex)
+    peEndIndex = numel(extendedTime);
 end
-negativeEndIndex = find(initialNegativeOcp >= negativeOcpLimit, 1, 'first');
-if isempty(negativeEndIndex)
-    negativeEndIndex = numel(extendedTime);
+neEndIndex = find(initneOCP >= neOCPLimit, 1, 'first');
+if isempty(neEndIndex)
+    neEndIndex = numel(extendedTime);
 end
 
-% Extend the calibrated graphite curve to negative capacity to show electrode balancing.
-negativeTime = linspace(experimentalTime(1) - 0.4 * experimentDuration, ...
+% Extend the calibrated graphite curve to ne capacity to show electrode balancing.
+neTime = linspace(expTime(1) - 0.4 * experimentDuration, ...
     extendedTime(end), numel(extendedTime))';
-[~, ~, calibratedNegativeOcp] = ecs.computeF(negativeTime, Xopt);
-calibratedNegativeEndIndex = find(calibratedNegativeOcp >= negativeOcpLimit, 1, 'first');
-if isempty(calibratedNegativeEndIndex)
-    calibratedNegativeEndIndex = numel(negativeTime);
+[~, ~, calibratedneOCP] = ecs.computeF(neTime, Xopt);
+calibratedneEndIndex = find(calibratedneOCP >= neOCPLimit, 1, 'first');
+if isempty(calibratedneEndIndex)
+    calibratedneEndIndex = numel(neTime);
 end
-negativeTime = negativeTime(1:calibratedNegativeEndIndex);
-calibratedNegativeOcp = calibratedNegativeOcp(1:calibratedNegativeEndIndex);
-negativeStartIndex = find(calibratedNegativeOcp >= 0, 1, 'first');
-assert(~isempty(negativeStartIndex), 'No nonnegative calibrated graphite OCP values to plot.');
-negativeTime = negativeTime(negativeStartIndex:end);
-calibratedNegativeOcp = calibratedNegativeOcp(negativeStartIndex:end);
+neTime = neTime(1:calibratedneEndIndex);
+calibratedneOCP = calibratedneOCP(1:calibratedneEndIndex);
+neStartIndex = find(calibratedneOCP >= 0, 1, 'first');
+assert(~isempty(neStartIndex), 'No nonne calibrated graphite OCP values to plot.');
+neTime = neTime(neStartIndex:end);
+calibratedneOCP = calibratedneOCP(neStartIndex:end);
 
 % Convert constant-current charge in A s to mAh per cm^2 of model face area.
 faceArea = outputInit.jsonstruct.Geometry.faceArea;
-arealCapacity = @(time) expdata.I * (time - experimentalTime(1)) / hour / milli ...
+arealCapacity = @(time) expdata.I * (time - expTime(1)) / hour / milli ...
     * centi^2 / faceArea;
-experimentalCapacity = arealCapacity(experimentalTime);
-initialPositiveCapacity = arealCapacity(extendedTime(1:positiveEndIndex));
-initialNegativeCapacity = arealCapacity(extendedTime(1:negativeEndIndex));
-calibratedNegativeCapacity = arealCapacity(negativeTime);
+expCapacity = arealCapacity(expTime);
+initpeCapacity = arealCapacity(extendedTime(1:peEndIndex));
+initneCapacity = arealCapacity(extendedTime(1:neEndIndex));
+calibratedneCapacity = arealCapacity(neTime);
 
 balancingColors = lines(3);
 balancingFigure = figure('Units', 'inches', 'Position', [0.2, 0.2, 7.2, 6.2]);
 hold on;
 grid on;
-plot(initialNegativeCapacity, initialNegativeOcp(1:negativeEndIndex), ...
+plot(initneCapacity, initneOCP(1:neEndIndex), ...
     'DisplayName', 'Graphite init', ...
     'Color', balancingColors(1,:), ...
     'LineStyle', '--');
-plot(initialPositiveCapacity, initialPositiveOcp(1:positiveEndIndex), ...
+plot(initpeCapacity, initpeOCP(1:peEndIndex), ...
     'DisplayName', 'LNMO init', ...
     'Color', balancingColors(2,:), ...
     'LineStyle', '--');
-plot(initialPositiveCapacity, initialCellOcp(1:positiveEndIndex), ...
+plot(initpeCapacity, initCellOCP(1:peEndIndex), ...
     'DisplayName', 'Full Cell init', ...
     'Color', balancingColors(3,:), ...
     'LineStyle', '--');
-plot(calibratedNegativeCapacity, calibratedNegativeOcp, ...
+plot(calibratedneCapacity, calibratedneOCP, ...
     'DisplayName', 'Graphite opt', 'Color', balancingColors(1,:));
-plot(experimentalCapacity, calibratedPositiveOcp, ...
+plot(expCapacity, calibratedpeOCP, ...
     'DisplayName', 'LNMO opt', 'Color', balancingColors(2,:));
-plot(experimentalCapacity, calibratedCellOcp, ...
+plot(expCapacity, calibratedCellOCP, ...
     'DisplayName', 'Full Cell opt', 'Color', balancingColors(3,:));
-plot(experimentalCapacity, expdata.U, 'k:', 'DisplayName', 'Experiment 0.05 C');
+plot(expCapacity, expdata.U, 'k:', 'DisplayName', 'Experiment 0.05 C');
 xlabel('Capacity / mAh cm^{-2}');
 ylabel('Voltage / V');
 title('Figure 12. Cell balancing under equilibrium assumption');

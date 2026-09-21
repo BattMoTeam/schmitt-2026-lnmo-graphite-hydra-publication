@@ -120,6 +120,7 @@ classdef EquilibriumSensitivityParameter < ModelParameter
             pe = 'PositiveElectrode';
             co = 'Coating';
             am = 'ActiveMaterial';
+            itf = 'Interface';
             sd = 'SolidDiffusion';
             elyte = 'Electrolyte';
 
@@ -128,7 +129,7 @@ classdef EquilibriumSensitivityParameter < ModelParameter
                 coating.volumeFractions(coating.compInds.(am));
             amountPerVolumeFraction = ...
                 sum(coating.G.getVolumes()) .* activeMaterialFraction .* ...
-                coating.(am).Interface.saturationConcentration;
+                coating.(am).(itf).saturationConcentration;
             volumeFraction = value ./ amountPerVolumeFraction;
 
             coating.volumeFraction = volumeFraction;

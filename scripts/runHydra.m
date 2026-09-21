@@ -189,8 +189,8 @@ function output = runHydra(input, varargin)
         'numberOfTimeSteps', input.numTimesteps, ...
         'useRampup', true, ...
         'numberOfRampupSteps', 10);
-    step    = model.Control.setupScheduleStep(timestep);
-    control = model.Control.setupScheduleControl();
+    step    = model.(ctrl).setupScheduleStep(timestep);
+    control = model.(ctrl).setupScheduleControl();
     schedule = struct('control', control, 'step', step);
 
     % Store variables
