@@ -1,0 +1,24 @@
+{
+  "NegativeElectrode": {
+    "Coating": {
+      "ActiveMaterial": {
+        "Interface": {
+          "guestStoichiometry100": 0.78582795783217141,
+          "guestStoichiometry0": 0
+        }
+      },
+      "volumeFraction": 0.59934696827670109
+    }
+  },
+  "PositiveElectrode": {
+    "Coating": {
+      "ActiveMaterial": {
+        "Interface": {
+          "guestStoichiometry100": 0.12825231675972379,
+          "guestStoichiometry0": 0.88428030550713821
+        }
+      },
+      "volumeFraction": 0.67336120954893108
+    }
+  }
+}

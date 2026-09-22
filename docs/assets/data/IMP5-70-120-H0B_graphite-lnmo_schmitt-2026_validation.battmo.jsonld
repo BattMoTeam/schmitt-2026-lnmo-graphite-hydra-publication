@@ -1,0 +1,1726 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "schema": "https://schema.org/",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "qudt": "http://qudt.org/vocab/unit/",
+    "battmo": "https://github.com/BattMoTeam/schmitt-2026-lnmo-graphite-hydra-publication/vocab/battmo#",
+    "emmo": "https://w3id.org/emmo#",
+    "electrochemistry": "https://w3id.org/emmo/domain/electrochemistry#",
+    "battery": "https://w3id.org/emmo/domain/battery#",
+    "ActivationEnergy": "electrochemistry:electrochemistry_d7f8cab9_b035_4ecd_be63_292672572526",
+    "ActiveMaterial": "electrochemistry:electrochemistry_79d1b273_58cd_4be6_a250_434817f7c261",
+    "AmountConcentration": "emmo:EMMO_d5be1faf_0c56_4f5a_9b78_581e6dee949f",
+    "AmperePerSquareMetre": "emmo:AmperePerSquareMetre",
+    "BatteryCell": "battery:battery_68ed592a_7924_45d0_a108_94d6275d57f0",
+    "Binder": "electrochemistry:electrochemistry_68eb5e35_5bd8_47b1_9b7f_f67224fa291e",
+    "BruggemanCoefficient": "electrochemistry:electrochemistry_5c34b3b5_c9c4_477d_809a_3f682f995aa9",
+    "ChargeTransferCoefficient": "electrochemistry:electrochemistry_a4dfa5c1_55a9_4285_b71d_90cf6613ca31",
+    "ConductiveAdditive": "electrochemistry:electrochemistry_82fef384_8eec_4765_b707_5397054df594",
+    "CurrentCollector": "electrochemistry:electrochemistry_212af058_3bbb_419f_a9c6_90ba9ebb3706",
+    "Density": "emmo:EMMO_06448f64_8db6_4304_8b2c_e785dba82044",
+    "Diffusivity": "electrochemistry:electrochemistry_37b24a94_cae0_4d7a_9519_9f7692dec607",
+    "Electrode": "electrochemistry:electrochemistry_0f007072_a8dd_4798_b865_1bf9363be627",
+    "ElectrodeCoating": "electrochemistry:electrochemistry_403c300e_09b9_400b_943b_04e82a3cfb56",
+    "Electrolyte": "electrochemistry:electrochemistry_fb0d9eef_92af_4628_8814_e065ca255d59",
+    "ElectronicConductivity": "electrochemistry:electrochemistry_ce74d2dc_d496_4116_b2fb_3e83d88bc744",
+    "ExchangeCurrentDensity": "electrochemistry:electrochemistry_e9fd9ef9_adfe_46cb_b2f9_4558468a25e7",
+    "IonTransportNumber": "emmo:EMMO_d97b27cb_61a4_4568_a38b_4edd4f224acc",
+    "IonicConductivity": "electrochemistry:electrochemistry_25dabdc2_68bf_4a38_8cbe_11be017358bc",
+    "JoulePerKilogramKelvin": "emmo:JoulePerKilogramKelvin",
+    "JoulePerMole": "emmo:JoulePerMole",
+    "Kelvin": "emmo:Kelvin",
+    "KilogramPerCubicMetre": "emmo:KilogramPerCubicMetre",
+    "LowerVoltageLimit": "electrochemistry:electrochemistry_534dd59c_904c_45d9_8550_ae9d2eb6bbc9",
+    "MassFraction": "emmo:EMMO_7c055d65_2929_40e1_af4f_4bf10995ad50",
+    "MaximumConcentration": "electrochemistry:electrochemistry_47287d09_6108_45ca_ac65_8b9451b1065e",
+    "Metre": "emmo:Metre",
+    "MolePerCubicMetre": "emmo:MolePerCubicMetre",
+    "NumberOfElectronsTransferred": "electrochemistry:electrochemistry_abfadc99_6e43_4d37_9b04_7fc5b0f327ae",
+    "OpenCircuitVoltage": "electrochemistry:electrochemistry_9c657fdc_b9d3_4964_907c_f9a6e8c5f52b",
+    "ParticleRadius": "electrochemistry:electrochemistry_b92e382f_5109_4f60_ab5e_c89d340419a9",
+    "Porosity": "emmo:EMMO_3a6578ac_aee0_43b9_9bc6_1eb208c8c9a9",
+    "RealData": "emmo:EMMO_18d180e4_5e3e_42f7_820c_e08951223486",
+    "Separator": "electrochemistry:electrochemistry_331e6cca_f260_4bf8_af55_35304fe1bbe0",
+    "SiemensPerMetre": "emmo:SiemensPerMetre",
+    "SpecificHeatCapacity": "emmo:EMMO_b4f4ed28_d24c_4a00_9583_62ab839abeca",
+    "SquareMetrePerSecond": "emmo:SquareMetrePerSecond",
+    "StateOfCharge": "electrochemistry:electrochemistry_8b2aaa50_bbe1_45da_8778_8898326246a2",
+    "StoichiometricCoefficientAtSOC0": "electrochemistry:electrochemistry_f22bd1ec_faca_4335_92a5_a1687154c622",
+    "StoichiometricCoefficientAtSOC100": "electrochemistry:electrochemistry_38ab058e_3912_48c2_a7eb_76d25d000820",
+    "ThermalConductivity": "emmo:EMMO_8dd40ec6_2c5a_43f3_bf64_cadcd447a1c1",
+    "ThermodynamicTemperature": "emmo:EMMO_affe07e4_e9bc_4852_86c6_69e26182a17f",
+    "Thickness": "emmo:EMMO_43003c86_9d15_433b_9789_ee2940920656",
+    "UnitOne": "emmo:EMMO_5ebd5e01_0ed3_49a2_a30d_cd05cbe72978",
+    "Volt": "emmo:Volt",
+    "VolumeFraction": "emmo:EMMO_a8eb87b5_4d10_4137_a75c_e04ee59ca095",
+    "VolumetricSurfaceArea": "electrochemistry:electrochemistry_a5571263_f153_448f_84a3_cd18092cf8fa",
+    "WattPerMetreKelvin": "emmo:WattPerMetreKelvin",
+    "hasActiveMaterial": {
+      "@id": "electrochemistry:electrochemistry_860aa941_5ff9_4452_8a16_7856fad07bee",
+      "@type": "@id"
+    },
+    "hasBinder": {
+      "@id": "electrochemistry:electrochemistry_056a5fab_3d99_46bd_8eb1_6e89a368e1a7",
+      "@type": "@id"
+    },
+    "hasCoating": {
+      "@id": "electrochemistry:electrochemistry_4df9926d_d4f2_4955_93f3_a03c5edc5383",
+      "@type": "@id"
+    },
+    "hasConductiveAdditive": {
+      "@id": "electrochemistry:electrochemistry_c830c469_60c3_4380_8382_4df13a32a1e7",
+      "@type": "@id"
+    },
+    "hasCurrentCollector": {
+      "@id": "electrochemistry:electrochemistry_cc8c2c5d_cf3d_444d_a7e8_44ec4c06a88e",
+      "@type": "@id"
+    },
+    "hasElectrolyte": {
+      "@id": "electrochemistry:electrochemistry_3bd08946_4e81_455d_9fca_dc7a5ead9315",
+      "@type": "@id"
+    },
+    "hasMeasurementUnit": {
+      "@id": "emmo:EMMO_bed1d005_b04e_4a90_94cf_02bc678a8569",
+      "@type": "@vocab"
+    },
+    "hasNegativeElectrode": {
+      "@id": "electrochemistry:electrochemistry_5d299271_3f68_494f_ab96_3db9acdd3138",
+      "@type": "@id"
+    },
+    "hasNumericalPart": {
+      "@id": "emmo:EMMO_8ef3cd6d_ae58_4a8d_9fc0_ad8f49015cd0",
+      "@type": "@id"
+    },
+    "hasNumericalValue": "emmo:EMMO_faf79f53_749d_40b2_807c_d34244c192f4",
+    "hasPositiveElectrode": {
+      "@id": "electrochemistry:electrochemistry_8e9cf965_9f92_46e8_b678_b50410ce3616",
+      "@type": "@id"
+    },
+    "hasProperty": {
+      "@id": "emmo:EMMO_e1097637_70d2_4895_973f_2396f04fa204",
+      "@type": "@id"
+    },
+    "hasSeparator": {
+      "@id": "electrochemistry:electrochemistry_9317be62_e602_4343_a72d_02c87201b9f6",
+      "@type": "@id"
+    },
+    "sourceData": {
+      "@id": "battmo:sourceData",
+      "@type": "@json"
+    },
+    "sourceValue": {
+      "@id": "battmo:sourceValue",
+      "@type": "@json"
+    }
+  },
+  "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092",
+  "@type": "BatteryCell",
+  "hasPositiveElectrode": {
+    "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode",
+    "@type": "Electrode",
+    "rdfs:label": "PositiveElectrode",
+    "battmo:sourcePath": "/PositiveElectrode",
+    "hasCoating": {
+      "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating",
+      "@type": "ElectrodeCoating",
+      "rdfs:label": "Coating",
+      "battmo:sourcePath": "/PositiveElectrode/Coating",
+      "hasActiveMaterial": {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial",
+        "@type": "ActiveMaterial",
+        "rdfs:label": "ActiveMaterial",
+        "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial",
+        "hasProperty": [
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/Interface/volumetricSurfaceArea",
+            "@type": [
+              "VolumetricSurfaceArea",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "volumetricSurfaceArea",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/Interface/volumetricSurfaceArea",
+            "sourceValue": 222275.44206886273,
+            "hasMeasurementUnit": "qudt:PER-M",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 222275.44206886273
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/Interface/guestStoichiometry100",
+            "@type": [
+              "StoichiometricCoefficientAtSOC100",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "guestStoichiometry100",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/Interface/guestStoichiometry100",
+            "sourceValue": 0.1282523167597238,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 0.1282523167597238
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/Interface/guestStoichiometry0",
+            "@type": [
+              "StoichiometricCoefficientAtSOC0",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "guestStoichiometry0",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/Interface/guestStoichiometry0",
+            "sourceValue": 0.8842803055071382,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 0.8842803055071382
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/Interface/activationEnergyOfReaction",
+            "@type": [
+              "ActivationEnergy",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "activationEnergyOfReaction",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/Interface/activationEnergyOfReaction",
+            "sourceValue": 40460,
+            "hasMeasurementUnit": "JoulePerMole",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 40460
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/Interface/chargeTransferCoefficient",
+            "@type": [
+              "ChargeTransferCoefficient",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "chargeTransferCoefficient",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/Interface/chargeTransferCoefficient",
+            "sourceValue": 0.5,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 0.5
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/Interface/numberOfElectronsTransferred",
+            "@type": [
+              "NumberOfElectronsTransferred",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "numberOfElectronsTransferred",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/Interface/numberOfElectronsTransferred",
+            "sourceValue": 1,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 1
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/Interface/openCircuitPotential",
+            "@type": [
+              "OpenCircuitVoltage",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "openCircuitPotential",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/Interface/openCircuitPotential",
+            "sourceValue": {
+              "argumentList": [
+                "stoichiometry"
+              ],
+              "functionName": "computeOCPcathodeH0b",
+              "functionFormat": "named function"
+            },
+            "hasMeasurementUnit": "Volt"
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/Interface/exchangeCurrentDensity",
+            "@type": [
+              "ExchangeCurrentDensity",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "exchangeCurrentDensity",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/Interface/exchangeCurrentDensity",
+            "sourceValue": {
+              "argumentList": [
+                "soc"
+              ],
+              "functionName": "computeJ0cathodeH0b",
+              "functionFormat": "named function"
+            },
+            "hasMeasurementUnit": "AmperePerSquareMetre"
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/Interface/saturationConcentration",
+            "@type": [
+              "MaximumConcentration",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "saturationConcentration",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/Interface/saturationConcentration",
+            "sourceValue": 23761,
+            "hasMeasurementUnit": "MolePerCubicMetre",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 23761
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/SolidDiffusion/referenceDiffusionCoefficient",
+            "@type": [
+              "Diffusivity",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "referenceDiffusionCoefficient",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/SolidDiffusion/referenceDiffusionCoefficient",
+            "sourceValue": 3.4597121093775474e-14,
+            "hasMeasurementUnit": "SquareMetrePerSecond",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 3.4597121093775474e-14
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/SolidDiffusion/activationEnergyOfDiffusion",
+            "@type": [
+              "ActivationEnergy",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "activationEnergyOfDiffusion",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/SolidDiffusion/activationEnergyOfDiffusion",
+            "sourceValue": 5630,
+            "hasMeasurementUnit": "JoulePerMole",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 5630
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/SolidDiffusion/particleRadius",
+            "@type": [
+              "ParticleRadius",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "particleRadius",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/SolidDiffusion/particleRadius",
+            "sourceValue": 8.94e-06,
+            "hasMeasurementUnit": "Metre",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 8.94e-06
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/SolidDiffusion/numberOfDiscreteCells",
+            "@type": "battmo:ModelParameter",
+            "rdfs:label": "numberOfDiscreteCells",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/SolidDiffusion/numberOfDiscreteCells",
+            "sourceValue": 10
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/density",
+            "@type": [
+              "Density",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "density",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/density",
+            "sourceValue": 4200,
+            "hasMeasurementUnit": "KilogramPerCubicMetre",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 4200
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/diffusionModelType",
+            "@type": "battmo:ModelParameter",
+            "rdfs:label": "diffusionModelType",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/diffusionModelType",
+            "sourceValue": "full"
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ActiveMaterial/massFraction",
+            "@type": [
+              "MassFraction",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "massFraction",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ActiveMaterial/massFraction",
+            "sourceValue": 0.92,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 0.92
+            }
+          }
+        ]
+      },
+      "hasBinder": {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/Binder",
+        "@type": "Binder",
+        "rdfs:label": "Binder",
+        "battmo:sourcePath": "/PositiveElectrode/Coating/Binder",
+        "hasProperty": [
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/Binder/density",
+            "@type": [
+              "Density",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "density",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/Binder/density",
+            "sourceValue": 1800,
+            "hasMeasurementUnit": "KilogramPerCubicMetre",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 1800
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/Binder/massFraction",
+            "@type": [
+              "MassFraction",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "massFraction",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/Binder/massFraction",
+            "sourceValue": 0.04,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 0.04
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/Binder/electronicConductivity",
+            "@type": [
+              "ElectronicConductivity",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "electronicConductivity",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/Binder/electronicConductivity",
+            "sourceValue": 18,
+            "hasMeasurementUnit": "SiemensPerMetre",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 18
+            }
+          }
+        ]
+      },
+      "hasConductiveAdditive": {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ConductingAdditive",
+        "@type": "ConductiveAdditive",
+        "rdfs:label": "ConductingAdditive",
+        "battmo:sourcePath": "/PositiveElectrode/Coating/ConductingAdditive",
+        "hasProperty": [
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ConductingAdditive/density",
+            "@type": [
+              "Density",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "density",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ConductingAdditive/density",
+            "sourceValue": 1800,
+            "hasMeasurementUnit": "KilogramPerCubicMetre",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 1800
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ConductingAdditive/massFraction",
+            "@type": [
+              "MassFraction",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "massFraction",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ConductingAdditive/massFraction",
+            "sourceValue": 0.04,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 0.04
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/ConductingAdditive/electronicConductivity",
+            "@type": [
+              "ElectronicConductivity",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "electronicConductivity",
+            "battmo:sourcePath": "/PositiveElectrode/Coating/ConductingAdditive/electronicConductivity",
+            "sourceValue": 18,
+            "hasMeasurementUnit": "SiemensPerMetre",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 18
+            }
+          }
+        ]
+      },
+      "hasProperty": [
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/volumeFraction",
+          "@type": [
+            "VolumeFraction",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "volumeFraction",
+          "battmo:sourcePath": "/PositiveElectrode/Coating/volumeFraction",
+          "sourceValue": 0.6733612095489311,
+          "hasMeasurementUnit": "UnitOne",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 0.6733612095489311
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/numberOfDiscreteCells",
+          "@type": "battmo:ModelParameter",
+          "rdfs:label": "numberOfDiscreteCells",
+          "battmo:sourcePath": "/PositiveElectrode/Coating/numberOfDiscreteCells",
+          "sourceValue": 10
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/thickness",
+          "@type": [
+            "Thickness",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "thickness",
+          "battmo:sourcePath": "/PositiveElectrode/Coating/thickness",
+          "sourceValue": 7.65e-05,
+          "hasMeasurementUnit": "Metre",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 7.65e-05
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/bruggemanCoefficient",
+          "@type": [
+            "BruggemanCoefficient",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "bruggemanCoefficient",
+          "battmo:sourcePath": "/PositiveElectrode/Coating/bruggemanCoefficient",
+          "sourceValue": 1.9818678700163161,
+          "hasMeasurementUnit": "UnitOne",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 1.9818678700163161
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/electronicConductivity",
+          "@type": [
+            "ElectronicConductivity",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "electronicConductivity",
+          "battmo:sourcePath": "/PositiveElectrode/Coating/electronicConductivity",
+          "sourceValue": 18,
+          "hasMeasurementUnit": "SiemensPerMetre",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 18
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/Coating/effectiveElectronicConductivity",
+          "@type": [
+            "ElectronicConductivity",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "effectiveElectronicConductivity",
+          "battmo:sourcePath": "/PositiveElectrode/Coating/effectiveElectronicConductivity",
+          "sourceValue": 18,
+          "hasMeasurementUnit": "SiemensPerMetre",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 18
+          }
+        }
+      ]
+    },
+    "hasCurrentCollector": {
+      "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/CurrentCollector",
+      "@type": "CurrentCollector",
+      "rdfs:label": "CurrentCollector",
+      "battmo:sourcePath": "/PositiveElectrode/CurrentCollector",
+      "hasProperty": [
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/CurrentCollector/electronicConductivity",
+          "@type": [
+            "ElectronicConductivity",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "electronicConductivity",
+          "battmo:sourcePath": "/PositiveElectrode/CurrentCollector/electronicConductivity",
+          "sourceValue": 35500000.0,
+          "hasMeasurementUnit": "SiemensPerMetre",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 35500000.0
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/CurrentCollector/thermalConductivity",
+          "@type": [
+            "ThermalConductivity",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "thermalConductivity",
+          "battmo:sourcePath": "/PositiveElectrode/CurrentCollector/thermalConductivity",
+          "sourceValue": 170,
+          "hasMeasurementUnit": "WattPerMetreKelvin",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 170
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/CurrentCollector/specificHeatCapacity",
+          "@type": [
+            "SpecificHeatCapacity",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "specificHeatCapacity",
+          "battmo:sourcePath": "/PositiveElectrode/CurrentCollector/specificHeatCapacity",
+          "sourceValue": 875,
+          "hasMeasurementUnit": "JoulePerKilogramKelvin",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 875
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/CurrentCollector/density",
+          "@type": [
+            "Density",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "density",
+          "battmo:sourcePath": "/PositiveElectrode/CurrentCollector/density",
+          "sourceValue": 2700,
+          "hasMeasurementUnit": "KilogramPerCubicMetre",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 2700
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/CurrentCollector/thickness",
+          "@type": [
+            "Thickness",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "thickness",
+          "battmo:sourcePath": "/PositiveElectrode/CurrentCollector/thickness",
+          "sourceValue": 2e-05,
+          "hasMeasurementUnit": "Metre",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 2e-05
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/PositiveElectrode/CurrentCollector/numberOfDiscreteCells",
+          "@type": "battmo:ModelParameter",
+          "rdfs:label": "numberOfDiscreteCells",
+          "battmo:sourcePath": "/PositiveElectrode/CurrentCollector/numberOfDiscreteCells",
+          "sourceValue": 10
+        }
+      ]
+    }
+  },
+  "hasNegativeElectrode": {
+    "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode",
+    "@type": "Electrode",
+    "rdfs:label": "NegativeElectrode",
+    "battmo:sourcePath": "/NegativeElectrode",
+    "hasCoating": {
+      "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating",
+      "@type": "ElectrodeCoating",
+      "rdfs:label": "Coating",
+      "battmo:sourcePath": "/NegativeElectrode/Coating",
+      "hasActiveMaterial": {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial",
+        "@type": "ActiveMaterial",
+        "rdfs:label": "ActiveMaterial",
+        "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial",
+        "hasProperty": [
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial/SolidDiffusion/referenceDiffusionCoefficient",
+            "@type": [
+              "Diffusivity",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "referenceDiffusionCoefficient",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial/SolidDiffusion/referenceDiffusionCoefficient",
+            "sourceValue": 1.427347050167674e-13,
+            "hasMeasurementUnit": "SquareMetrePerSecond",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 1.427347050167674e-13
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial/SolidDiffusion/activationEnergyOfDiffusion",
+            "@type": [
+              "ActivationEnergy",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "activationEnergyOfDiffusion",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial/SolidDiffusion/activationEnergyOfDiffusion",
+            "sourceValue": 13820,
+            "hasMeasurementUnit": "JoulePerMole",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 13820
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial/SolidDiffusion/particleRadius",
+            "@type": [
+              "ParticleRadius",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "particleRadius",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial/SolidDiffusion/particleRadius",
+            "sourceValue": 1.63e-05,
+            "hasMeasurementUnit": "Metre",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 1.63e-05
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial/SolidDiffusion/numberOfDiscreteCells",
+            "@type": "battmo:ModelParameter",
+            "rdfs:label": "numberOfDiscreteCells",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial/SolidDiffusion/numberOfDiscreteCells",
+            "sourceValue": 10
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial/Interface/guestStoichiometry100",
+            "@type": [
+              "StoichiometricCoefficientAtSOC100",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "guestStoichiometry100",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial/Interface/guestStoichiometry100",
+            "sourceValue": 0.7858279578321714,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 0.7858279578321714
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial/Interface/guestStoichiometry0",
+            "@type": [
+              "StoichiometricCoefficientAtSOC0",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "guestStoichiometry0",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial/Interface/guestStoichiometry0",
+            "sourceValue": 0,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 0
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial/Interface/chargeTransferCoefficient",
+            "@type": [
+              "ChargeTransferCoefficient",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "chargeTransferCoefficient",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial/Interface/chargeTransferCoefficient",
+            "sourceValue": 0.5,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 0.5
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial/Interface/exchangeCurrentDensity",
+            "@type": [
+              "ExchangeCurrentDensity",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "exchangeCurrentDensity",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial/Interface/exchangeCurrentDensity",
+            "sourceValue": {
+              "argumentList": [
+                "soc"
+              ],
+              "functionName": "computeJ0anodeH0b",
+              "functionFormat": "named function"
+            },
+            "hasMeasurementUnit": "AmperePerSquareMetre"
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial/Interface/numberOfElectronsTransferred",
+            "@type": [
+              "NumberOfElectronsTransferred",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "numberOfElectronsTransferred",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial/Interface/numberOfElectronsTransferred",
+            "sourceValue": 1,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 1
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial/Interface/openCircuitPotential",
+            "@type": [
+              "OpenCircuitVoltage",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "openCircuitPotential",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial/Interface/openCircuitPotential",
+            "sourceValue": {
+              "argumentList": [
+                "stoichiometry"
+              ],
+              "functionName": "computeOCPanodeH0b",
+              "functionFormat": "named function"
+            },
+            "hasMeasurementUnit": "Volt"
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial/Interface/saturationConcentration",
+            "@type": [
+              "MaximumConcentration",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "saturationConcentration",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial/Interface/saturationConcentration",
+            "sourceValue": 31360,
+            "hasMeasurementUnit": "MolePerCubicMetre",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 31360
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial/Interface/volumetricSurfaceArea",
+            "@type": [
+              "VolumetricSurfaceArea",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "volumetricSurfaceArea",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial/Interface/volumetricSurfaceArea",
+            "sourceValue": 1540000.0,
+            "hasMeasurementUnit": "qudt:PER-M",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 1540000.0
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial/density",
+            "@type": [
+              "Density",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "density",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial/density",
+            "sourceValue": 2250,
+            "hasMeasurementUnit": "KilogramPerCubicMetre",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 2250
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial/diffusionModelType",
+            "@type": "battmo:ModelParameter",
+            "rdfs:label": "diffusionModelType",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial/diffusionModelType",
+            "sourceValue": "full"
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ActiveMaterial/massFraction",
+            "@type": [
+              "MassFraction",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "massFraction",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ActiveMaterial/massFraction",
+            "sourceValue": 0.96,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 0.96
+            }
+          }
+        ]
+      },
+      "hasBinder": {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/Binder",
+        "@type": "Binder",
+        "rdfs:label": "Binder",
+        "battmo:sourcePath": "/NegativeElectrode/Coating/Binder",
+        "hasProperty": [
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/Binder/density",
+            "@type": [
+              "Density",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "density",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/Binder/density",
+            "sourceValue": 1320,
+            "hasMeasurementUnit": "KilogramPerCubicMetre",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 1320
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/Binder/massFraction",
+            "@type": [
+              "MassFraction",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "massFraction",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/Binder/massFraction",
+            "sourceValue": 0.03,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 0.03
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/Binder/electronicConductivity",
+            "@type": [
+              "ElectronicConductivity",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "electronicConductivity",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/Binder/electronicConductivity",
+            "sourceValue": 62,
+            "hasMeasurementUnit": "SiemensPerMetre",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 62
+            }
+          }
+        ]
+      },
+      "hasConductiveAdditive": {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ConductingAdditive",
+        "@type": "ConductiveAdditive",
+        "rdfs:label": "ConductingAdditive",
+        "battmo:sourcePath": "/NegativeElectrode/Coating/ConductingAdditive",
+        "hasProperty": [
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ConductingAdditive/density",
+            "@type": [
+              "Density",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "density",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ConductingAdditive/density",
+            "sourceValue": 1800,
+            "hasMeasurementUnit": "KilogramPerCubicMetre",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 1800
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ConductingAdditive/massFraction",
+            "@type": [
+              "MassFraction",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "massFraction",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ConductingAdditive/massFraction",
+            "sourceValue": 0.01,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 0.01
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/ConductingAdditive/electronicConductivity",
+            "@type": [
+              "ElectronicConductivity",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "electronicConductivity",
+            "battmo:sourcePath": "/NegativeElectrode/Coating/ConductingAdditive/electronicConductivity",
+            "sourceValue": 62,
+            "hasMeasurementUnit": "SiemensPerMetre",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 62
+            }
+          }
+        ]
+      },
+      "hasProperty": [
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/volumeFraction",
+          "@type": [
+            "VolumeFraction",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "volumeFraction",
+          "battmo:sourcePath": "/NegativeElectrode/Coating/volumeFraction",
+          "sourceValue": 0.5993469682767011,
+          "hasMeasurementUnit": "UnitOne",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 0.5993469682767011
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/numberOfDiscreteCells",
+          "@type": "battmo:ModelParameter",
+          "rdfs:label": "numberOfDiscreteCells",
+          "battmo:sourcePath": "/NegativeElectrode/Coating/numberOfDiscreteCells",
+          "sourceValue": 10
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/thickness",
+          "@type": [
+            "Thickness",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "thickness",
+          "battmo:sourcePath": "/NegativeElectrode/Coating/thickness",
+          "sourceValue": 5.65e-05,
+          "hasMeasurementUnit": "Metre",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 5.65e-05
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/bruggemanCoefficient",
+          "@type": [
+            "BruggemanCoefficient",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "bruggemanCoefficient",
+          "battmo:sourcePath": "/NegativeElectrode/Coating/bruggemanCoefficient",
+          "sourceValue": 2.357082729790185,
+          "hasMeasurementUnit": "UnitOne",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 2.357082729790185
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/electronicConductivity",
+          "@type": [
+            "ElectronicConductivity",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "electronicConductivity",
+          "battmo:sourcePath": "/NegativeElectrode/Coating/electronicConductivity",
+          "sourceValue": 62,
+          "hasMeasurementUnit": "SiemensPerMetre",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 62
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/Coating/effectiveElectronicConductivity",
+          "@type": [
+            "ElectronicConductivity",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "effectiveElectronicConductivity",
+          "battmo:sourcePath": "/NegativeElectrode/Coating/effectiveElectronicConductivity",
+          "sourceValue": 62,
+          "hasMeasurementUnit": "SiemensPerMetre",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 62
+          }
+        }
+      ]
+    },
+    "hasCurrentCollector": {
+      "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/CurrentCollector",
+      "@type": "CurrentCollector",
+      "rdfs:label": "CurrentCollector",
+      "battmo:sourcePath": "/NegativeElectrode/CurrentCollector",
+      "hasProperty": [
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/CurrentCollector/electronicConductivity",
+          "@type": [
+            "ElectronicConductivity",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "electronicConductivity",
+          "battmo:sourcePath": "/NegativeElectrode/CurrentCollector/electronicConductivity",
+          "sourceValue": 59600000.0,
+          "hasMeasurementUnit": "SiemensPerMetre",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 59600000.0
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/CurrentCollector/thermalConductivity",
+          "@type": [
+            "ThermalConductivity",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "thermalConductivity",
+          "battmo:sourcePath": "/NegativeElectrode/CurrentCollector/thermalConductivity",
+          "sourceValue": 398,
+          "hasMeasurementUnit": "WattPerMetreKelvin",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 398
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/CurrentCollector/specificHeatCapacity",
+          "@type": [
+            "SpecificHeatCapacity",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "specificHeatCapacity",
+          "battmo:sourcePath": "/NegativeElectrode/CurrentCollector/specificHeatCapacity",
+          "sourceValue": 385,
+          "hasMeasurementUnit": "JoulePerKilogramKelvin",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 385
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/CurrentCollector/density",
+          "@type": [
+            "Density",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "density",
+          "battmo:sourcePath": "/NegativeElectrode/CurrentCollector/density",
+          "sourceValue": 8960,
+          "hasMeasurementUnit": "KilogramPerCubicMetre",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 8960
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/CurrentCollector/thickness",
+          "@type": [
+            "Thickness",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "thickness",
+          "battmo:sourcePath": "/NegativeElectrode/CurrentCollector/thickness",
+          "sourceValue": 1e-05,
+          "hasMeasurementUnit": "Metre",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 1e-05
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/NegativeElectrode/CurrentCollector/numberOfDiscreteCells",
+          "@type": "battmo:ModelParameter",
+          "rdfs:label": "numberOfDiscreteCells",
+          "battmo:sourcePath": "/NegativeElectrode/CurrentCollector/numberOfDiscreteCells",
+          "sourceValue": 10
+        }
+      ]
+    }
+  },
+  "hasElectrolyte": {
+    "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte",
+    "@type": "Electrolyte",
+    "rdfs:label": "Electrolyte",
+    "battmo:sourcePath": "/Electrolyte",
+    "hasProperty": [
+      {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/bgfactor",
+        "@type": "battmo:ModelParameter",
+        "rdfs:label": "bgfactor",
+        "battmo:sourcePath": "/Electrolyte/bgfactor",
+        "sourceValue": 1
+      },
+      {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/bruggemanCoefficient",
+        "@type": [
+          "BruggemanCoefficient",
+          "battmo:ModelParameter"
+        ],
+        "rdfs:label": "bruggemanCoefficient",
+        "battmo:sourcePath": "/Electrolyte/bruggemanCoefficient",
+        "sourceValue": 1.5,
+        "hasMeasurementUnit": "UnitOne",
+        "hasNumericalPart": {
+          "@type": "RealData",
+          "hasNumericalValue": 1.5
+        }
+      },
+      {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/compnames",
+        "@type": "battmo:ModelParameter",
+        "rdfs:label": "compnames",
+        "battmo:sourcePath": "/Electrolyte/compnames",
+        "sourceValue": [
+          "Li",
+          "PF6"
+        ]
+      },
+      {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/density",
+        "@type": [
+          "Density",
+          "battmo:ModelParameter"
+        ],
+        "rdfs:label": "density",
+        "battmo:sourcePath": "/Electrolyte/density",
+        "sourceValue": 1200,
+        "hasMeasurementUnit": "KilogramPerCubicMetre",
+        "hasNumericalPart": {
+          "@type": "RealData",
+          "hasNumericalValue": 1200
+        }
+      },
+      {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/diffusionCoefficient",
+        "@type": [
+          "Diffusivity",
+          "battmo:ModelParameter"
+        ],
+        "rdfs:label": "diffusionCoefficient",
+        "battmo:sourcePath": "/Electrolyte/diffusionCoefficient",
+        "sourceValue": {
+          "argumentList": [
+            "concentration",
+            "temperature"
+          ],
+          "functionName": "computeDiffusionCoefficient_Nyman2008",
+          "functionFormat": "named function"
+        },
+        "hasMeasurementUnit": "SquareMetrePerSecond"
+      },
+      {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/ionicConductivity",
+        "@type": [
+          "IonicConductivity",
+          "battmo:ModelParameter"
+        ],
+        "rdfs:label": "ionicConductivity",
+        "battmo:sourcePath": "/Electrolyte/ionicConductivity",
+        "sourceValue": {
+          "argumentList": [
+            "concentration",
+            "temperature"
+          ],
+          "functionName": "computeElectrolyteConductivity_Nyman2008",
+          "name": "conductivity",
+          "functionFormat": "named function"
+        },
+        "hasMeasurementUnit": "SiemensPerMetre"
+      },
+      {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/name",
+        "@type": "battmo:ModelParameter",
+        "rdfs:label": "name",
+        "battmo:sourcePath": "/Electrolyte/name",
+        "sourceValue": "orgLiPF6"
+      },
+      {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/useRegionBruggemanCoefficients",
+        "@type": "battmo:ModelParameter",
+        "rdfs:label": "useRegionBruggemanCoefficients",
+        "battmo:sourcePath": "/Electrolyte/useRegionBruggemanCoefficients",
+        "sourceValue": true
+      }
+    ],
+    "battmo:hasModelBlock": [
+      {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/regionBruggemanCoefficients",
+        "@type": "battmo:ModelBlock",
+        "rdfs:label": "regionBruggemanCoefficients",
+        "battmo:sourcePath": "/Electrolyte/regionBruggemanCoefficients",
+        "hasProperty": [
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/regionBruggemanCoefficients/NegativeElectrode",
+            "@type": [
+              "BruggemanCoefficient",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "NegativeElectrode",
+            "battmo:sourcePath": "/Electrolyte/regionBruggemanCoefficients/NegativeElectrode",
+            "sourceValue": 1.8624078889485083,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 1.8624078889485083
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/regionBruggemanCoefficients/PositiveElectrode",
+            "@type": [
+              "BruggemanCoefficient",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "PositiveElectrode",
+            "battmo:sourcePath": "/Electrolyte/regionBruggemanCoefficients/PositiveElectrode",
+            "sourceValue": 1.6836565160133157,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 1.6836565160133157
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/regionBruggemanCoefficients/Separator",
+            "@type": [
+              "BruggemanCoefficient",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "Separator",
+            "battmo:sourcePath": "/Electrolyte/regionBruggemanCoefficients/Separator",
+            "sourceValue": 4.531775112176847,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 4.531775112176847
+            }
+          }
+        ]
+      },
+      {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/species",
+        "@type": "battmo:ModelBlock",
+        "rdfs:label": "species",
+        "battmo:sourcePath": "/Electrolyte/species",
+        "hasProperty": [
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/species/chargeNumber",
+            "@type": "battmo:ModelParameter",
+            "rdfs:label": "chargeNumber",
+            "battmo:sourcePath": "/Electrolyte/species/chargeNumber",
+            "sourceValue": 1
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/species/nominalConcentration",
+            "@type": [
+              "AmountConcentration",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "nominalConcentration",
+            "battmo:sourcePath": "/Electrolyte/species/nominalConcentration",
+            "sourceValue": 1200,
+            "hasMeasurementUnit": "MolePerCubicMetre",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 1200
+            }
+          },
+          {
+            "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Electrolyte/species/transferenceNumber",
+            "@type": [
+              "IonTransportNumber",
+              "battmo:ModelParameter"
+            ],
+            "rdfs:label": "transferenceNumber",
+            "battmo:sourcePath": "/Electrolyte/species/transferenceNumber",
+            "sourceValue": 0.226,
+            "hasMeasurementUnit": "UnitOne",
+            "hasNumericalPart": {
+              "@type": "RealData",
+              "hasNumericalValue": 0.226
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "hasSeparator": {
+    "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Separator",
+    "@type": "Separator",
+    "rdfs:label": "Separator",
+    "battmo:sourcePath": "/Separator",
+    "hasProperty": [
+      {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Separator/bruggemanCoefficient",
+        "@type": [
+          "BruggemanCoefficient",
+          "battmo:ModelParameter"
+        ],
+        "rdfs:label": "bruggemanCoefficient",
+        "battmo:sourcePath": "/Separator/bruggemanCoefficient",
+        "sourceValue": 2.955238140801365,
+        "hasMeasurementUnit": "UnitOne",
+        "hasNumericalPart": {
+          "@type": "RealData",
+          "hasNumericalValue": 2.955238140801365
+        }
+      },
+      {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Separator/density",
+        "@type": [
+          "Density",
+          "battmo:ModelParameter"
+        ],
+        "rdfs:label": "density",
+        "battmo:sourcePath": "/Separator/density",
+        "sourceValue": 946,
+        "hasMeasurementUnit": "KilogramPerCubicMetre",
+        "hasNumericalPart": {
+          "@type": "RealData",
+          "hasNumericalValue": 946
+        }
+      },
+      {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Separator/porosity",
+        "@type": [
+          "Porosity",
+          "battmo:ModelParameter"
+        ],
+        "rdfs:label": "porosity",
+        "battmo:sourcePath": "/Separator/porosity",
+        "sourceValue": 0.48,
+        "hasMeasurementUnit": "UnitOne",
+        "hasNumericalPart": {
+          "@type": "RealData",
+          "hasNumericalValue": 0.48
+        }
+      },
+      {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Separator/thickness",
+        "@type": [
+          "Thickness",
+          "battmo:ModelParameter"
+        ],
+        "rdfs:label": "thickness",
+        "battmo:sourcePath": "/Separator/thickness",
+        "sourceValue": 2.5e-05,
+        "hasMeasurementUnit": "Metre",
+        "hasNumericalPart": {
+          "@type": "RealData",
+          "hasNumericalValue": 2.5e-05
+        }
+      },
+      {
+        "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Separator/numberOfDiscreteCells",
+        "@type": "battmo:ModelParameter",
+        "rdfs:label": "numberOfDiscreteCells",
+        "battmo:sourcePath": "/Separator/numberOfDiscreteCells",
+        "sourceValue": 10
+      }
+    ]
+  },
+  "hasProperty": [
+    {
+      "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/include_current_collectors",
+      "@type": "battmo:ModelParameter",
+      "rdfs:label": "include_current_collectors",
+      "battmo:sourcePath": "/include_current_collectors",
+      "sourceValue": true
+    },
+    {
+      "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/initT",
+      "@type": [
+        "ThermodynamicTemperature",
+        "battmo:ModelParameter"
+      ],
+      "rdfs:label": "initT",
+      "battmo:sourcePath": "/initT",
+      "sourceValue": 298.15,
+      "hasMeasurementUnit": "Kelvin",
+      "hasNumericalPart": {
+        "@type": "RealData",
+        "hasNumericalValue": 298.15
+      }
+    },
+    {
+      "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/use_thermal",
+      "@type": "battmo:ModelParameter",
+      "rdfs:label": "use_thermal",
+      "battmo:sourcePath": "/use_thermal",
+      "sourceValue": false
+    },
+    {
+      "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/SOC",
+      "@type": [
+        "StateOfCharge",
+        "battmo:ModelParameter"
+      ],
+      "rdfs:label": "SOC",
+      "battmo:sourcePath": "/SOC",
+      "sourceValue": 1,
+      "hasMeasurementUnit": "UnitOne",
+      "hasNumericalPart": {
+        "@type": "RealData",
+        "hasNumericalValue": 1
+      }
+    }
+  ],
+  "battmo:hasModelBlock": [
+    {
+      "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Control",
+      "@type": "battmo:ModelBlock",
+      "rdfs:label": "Control",
+      "battmo:sourcePath": "/Control",
+      "hasProperty": [
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Control/DRate",
+          "@type": "battmo:ModelParameter",
+          "rdfs:label": "DRate",
+          "battmo:sourcePath": "/Control/DRate",
+          "sourceValue": 1
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Control/controlPolicy",
+          "@type": "battmo:ModelParameter",
+          "rdfs:label": "controlPolicy",
+          "battmo:sourcePath": "/Control/controlPolicy",
+          "sourceValue": "CCDischarge"
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Control/lowerCutoffVoltage",
+          "@type": [
+            "LowerVoltageLimit",
+            "battmo:ModelParameter"
+          ],
+          "rdfs:label": "lowerCutoffVoltage",
+          "battmo:sourcePath": "/Control/lowerCutoffVoltage",
+          "sourceValue": 3.5,
+          "hasMeasurementUnit": "Volt",
+          "hasNumericalPart": {
+            "@type": "RealData",
+            "hasNumericalValue": 3.5
+          }
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Control/rampupTime",
+          "@type": "battmo:ModelParameter",
+          "rdfs:label": "rampupTime",
+          "battmo:sourcePath": "/Control/rampupTime",
+          "sourceValue": 0.1
+        },
+        {
+          "@id": "urn:sha256:cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092#/Control/useCVswitch",
+          "@type": "battmo:ModelParameter",
+          "rdfs:label": "useCVswitch",
+          "battmo:sourcePath": "/Control/useCVswitch",
+          "sourceValue": true
+        }
+      ]
+    }
+  ],
+  "schema:name": "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.json",
+  "schema:description": "Calibrated BattMo parameters with BattINFO/EMMO quantity mappings.",
+  "schema:encodingFormat": "application/ld+json",
+  "battmo:sourceFilename": "IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.json",
+  "battmo:canonicalSourceSha256": "cfd9c2cc7b69a5747d36ec272b3fd367f2d552f5b4d7b37bdb8f644698bde092",
+  "sourceData": {
+    "PositiveElectrode": {
+      "Coating": {
+        "ActiveMaterial": {
+          "Interface": {
+            "volumetricSurfaceArea": 222275.44206886273,
+            "guestStoichiometry100": 0.1282523167597238,
+            "guestStoichiometry0": 0.8842803055071382,
+            "activationEnergyOfReaction": 40460,
+            "chargeTransferCoefficient": 0.5,
+            "numberOfElectronsTransferred": 1,
+            "openCircuitPotential": {
+              "argumentList": [
+                "stoichiometry"
+              ],
+              "functionName": "computeOCPcathodeH0b",
+              "functionFormat": "named function"
+            },
+            "exchangeCurrentDensity": {
+              "argumentList": [
+                "soc"
+              ],
+              "functionName": "computeJ0cathodeH0b",
+              "functionFormat": "named function"
+            },
+            "saturationConcentration": 23761
+          },
+          "SolidDiffusion": {
+            "referenceDiffusionCoefficient": 3.4597121093775474e-14,
+            "activationEnergyOfDiffusion": 5630,
+            "particleRadius": 8.94e-06,
+            "numberOfDiscreteCells": 10
+          },
+          "density": 4200,
+          "diffusionModelType": "full",
+          "massFraction": 0.92
+        },
+        "volumeFraction": 0.6733612095489311,
+        "numberOfDiscreteCells": 10,
+        "thickness": 7.65e-05,
+        "bruggemanCoefficient": 1.9818678700163161,
+        "electronicConductivity": 18,
+        "effectiveElectronicConductivity": 18,
+        "Binder": {
+          "density": 1800,
+          "massFraction": 0.04,
+          "electronicConductivity": 18
+        },
+        "ConductingAdditive": {
+          "density": 1800,
+          "massFraction": 0.04,
+          "electronicConductivity": 18
+        }
+      },
+      "CurrentCollector": {
+        "electronicConductivity": 35500000.0,
+        "thermalConductivity": 170,
+        "specificHeatCapacity": 875,
+        "density": 2700,
+        "thickness": 2e-05,
+        "numberOfDiscreteCells": 10
+      }
+    },
+    "NegativeElectrode": {
+      "Coating": {
+        "ActiveMaterial": {
+          "SolidDiffusion": {
+            "referenceDiffusionCoefficient": 1.427347050167674e-13,
+            "activationEnergyOfDiffusion": 13820,
+            "particleRadius": 1.63e-05,
+            "numberOfDiscreteCells": 10
+          },
+          "Interface": {
+            "guestStoichiometry100": 0.7858279578321714,
+            "guestStoichiometry0": 0,
+            "chargeTransferCoefficient": 0.5,
+            "exchangeCurrentDensity": {
+              "argumentList": [
+                "soc"
+              ],
+              "functionName": "computeJ0anodeH0b",
+              "functionFormat": "named function"
+            },
+            "numberOfElectronsTransferred": 1,
+            "openCircuitPotential": {
+              "argumentList": [
+                "stoichiometry"
+              ],
+              "functionName": "computeOCPanodeH0b",
+              "functionFormat": "named function"
+            },
+            "saturationConcentration": 31360,
+            "volumetricSurfaceArea": 1540000.0
+          },
+          "density": 2250,
+          "diffusionModelType": "full",
+          "massFraction": 0.96
+        },
+        "volumeFraction": 0.5993469682767011,
+        "numberOfDiscreteCells": 10,
+        "thickness": 5.65e-05,
+        "bruggemanCoefficient": 2.357082729790185,
+        "electronicConductivity": 62,
+        "effectiveElectronicConductivity": 62,
+        "Binder": {
+          "density": 1320,
+          "massFraction": 0.03,
+          "electronicConductivity": 62
+        },
+        "ConductingAdditive": {
+          "density": 1800,
+          "massFraction": 0.01,
+          "electronicConductivity": 62
+        }
+      },
+      "CurrentCollector": {
+        "electronicConductivity": 59600000.0,
+        "thermalConductivity": 398,
+        "specificHeatCapacity": 385,
+        "density": 8960,
+        "thickness": 1e-05,
+        "numberOfDiscreteCells": 10
+      }
+    },
+    "Electrolyte": {
+      "regionBruggemanCoefficients": {
+        "NegativeElectrode": 1.8624078889485083,
+        "PositiveElectrode": 1.6836565160133157,
+        "Separator": 4.531775112176847
+      },
+      "bgfactor": 1,
+      "bruggemanCoefficient": 1.5,
+      "compnames": [
+        "Li",
+        "PF6"
+      ],
+      "density": 1200,
+      "diffusionCoefficient": {
+        "argumentList": [
+          "concentration",
+          "temperature"
+        ],
+        "functionName": "computeDiffusionCoefficient_Nyman2008",
+        "functionFormat": "named function"
+      },
+      "ionicConductivity": {
+        "argumentList": [
+          "concentration",
+          "temperature"
+        ],
+        "functionName": "computeElectrolyteConductivity_Nyman2008",
+        "name": "conductivity",
+        "functionFormat": "named function"
+      },
+      "name": "orgLiPF6",
+      "species": {
+        "chargeNumber": 1,
+        "nominalConcentration": 1200,
+        "transferenceNumber": 0.226
+      },
+      "useRegionBruggemanCoefficients": true
+    },
+    "include_current_collectors": true,
+    "initT": 298.15,
+    "use_thermal": false,
+    "SOC": 1,
+    "Control": {
+      "DRate": 1,
+      "controlPolicy": "CCDischarge",
+      "lowerCutoffVoltage": 3.5,
+      "rampupTime": 0.1,
+      "useCVswitch": true
+    },
+    "Separator": {
+      "bruggemanCoefficient": 2.955238140801365,
+      "density": 946,
+      "porosity": 0.48,
+      "thickness": 2.5e-05,
+      "numberOfDiscreteCells": 10
+    }
+  }
+}

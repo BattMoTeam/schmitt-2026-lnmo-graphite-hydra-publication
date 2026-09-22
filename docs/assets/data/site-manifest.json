@@ -1,0 +1,164 @@
+{
+  "summary": {
+    "validation_cases": 5,
+    "publication_figures": 5,
+    "supporting_dashboards": 10,
+    "fair_documents": 7
+  },
+  "vendor": {
+    "plotly_bundle": "assets/vendor/plotly.min.js"
+  },
+  "data": {
+    "validation_reference": {
+      "path": "assets/data/battmo-validation-reference.json",
+      "format": "json"
+    },
+    "figure12": {
+      "path": "assets/data/figure-12-cell-balancing-under-equilibrium-assumption.json",
+      "format": "json"
+    },
+    "figure13": {
+      "path": "assets/data/figure-13-high-rate-calibration-at-2C.json",
+      "format": "json"
+    },
+    "figure14": {
+      "path": "assets/data/figure-14-experimental-voltages-and-p2d-results.json",
+      "format": "json"
+    },
+    "supporting_states": {
+      "path": "assets/data/battmo-validation-states.json",
+      "format": "json"
+    },
+    "figure15": {
+      "path": "assets/data/figure-15-relative-parameter-sensitivities.json",
+      "format": "json"
+    },
+    "figure16": {
+      "path": "assets/data/figure-16-hessian-eigendecomposition.json",
+      "format": "json"
+    }
+  },
+  "publication_gallery": [
+    {
+      "title": "Figure 12",
+      "description": "Cell balancing under equilibrium assumption.",
+      "image": "assets/images/publication/figure-12-cell-balancing-under-equilibrium-assumption.png"
+    },
+    {
+      "title": "Figure 13",
+      "description": "Initial and calibrated responses at 2C using the current six-parameter calibration.",
+      "image": "assets/images/publication/figure-13-high-rate-calibration-at-2C.png"
+    },
+    {
+      "title": "Figure 14",
+      "description": "Experimental voltages and P2D model results over different discharge rates.",
+      "image": "assets/images/publication/figure-14-experimental-voltages-and-p2d-results.png"
+    },
+    {
+      "title": "Figure 15",
+      "description": "Initial relative sensitivities of the nine candidate parameters.",
+      "image": "assets/images/publication/figure-15-relative-parameter-sensitivities.png"
+    },
+    {
+      "title": "Figure 16",
+      "description": "Eigenvectors of the calibrated BFGS Hessian in scaled coordinates.",
+      "image": "assets/images/publication/figure-16-hessian-eigendecomposition.png"
+    }
+  ],
+  "supporting_gallery": [
+    {
+      "title": "Discharge rate 0.05 voltage curve",
+      "description": "BattMo voltage curve against the experimental discharge trace.",
+      "image": "assets/images/supporting/Case-1-voltage.png"
+    },
+    {
+      "title": "Discharge rate 0.05 state dashboard",
+      "description": "Electrolyte, potential, and particle-stoichiometry contour dashboard for the BattMo run.",
+      "image": "assets/images/supporting/Case-1-state-dashboard.png"
+    },
+    {
+      "title": "Discharge rate 0.2 voltage curve",
+      "description": "BattMo voltage curve against the experimental discharge trace.",
+      "image": "assets/images/supporting/Case-2-voltage.png"
+    },
+    {
+      "title": "Discharge rate 0.2 state dashboard",
+      "description": "Electrolyte, potential, and particle-stoichiometry contour dashboard for the BattMo run.",
+      "image": "assets/images/supporting/Case-2-state-dashboard.png"
+    },
+    {
+      "title": "Discharge rate 0.5 voltage curve",
+      "description": "BattMo voltage curve against the experimental discharge trace.",
+      "image": "assets/images/supporting/Case-3-voltage.png"
+    },
+    {
+      "title": "Discharge rate 0.5 state dashboard",
+      "description": "Electrolyte, potential, and particle-stoichiometry contour dashboard for the BattMo run.",
+      "image": "assets/images/supporting/Case-3-state-dashboard.png"
+    },
+    {
+      "title": "Discharge rate 1 voltage curve",
+      "description": "BattMo voltage curve against the experimental discharge trace.",
+      "image": "assets/images/supporting/Case-4-voltage.png"
+    },
+    {
+      "title": "Discharge rate 1 state dashboard",
+      "description": "Electrolyte, potential, and particle-stoichiometry contour dashboard for the BattMo run.",
+      "image": "assets/images/supporting/Case-4-state-dashboard.png"
+    },
+    {
+      "title": "Discharge rate 2 voltage curve",
+      "description": "BattMo voltage curve against the experimental discharge trace.",
+      "image": "assets/images/supporting/Case-5-voltage.png"
+    },
+    {
+      "title": "Discharge rate 2 state dashboard",
+      "description": "Electrolyte, potential, and particle-stoichiometry contour dashboard for the BattMo run.",
+      "image": "assets/images/supporting/Case-5-state-dashboard.png"
+    }
+  ],
+  "fair_documents": [
+    {
+      "label": "BattMo validation JSON-LD",
+      "description": "BattINFO/EMMO mappings of the merged validation parameters, with an embedded context and complete sourceData.",
+      "path": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.jsonld",
+      "format": "text"
+    },
+    {
+      "label": "Merged BattMo validation parameters",
+      "description": "Merged base, equilibrium, and high-rate BattMo parameters; geometry is supplied separately.",
+      "path": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.battmo.json",
+      "format": "text"
+    },
+    {
+      "label": "Publication BPX",
+      "description": "BPX 1.0 parameters with all five measured discharge curves included under Validation.",
+      "path": "assets/data/IMP5-70-120-H0B_graphite-lnmo_schmitt-2026_validation.bpx.json",
+      "format": "text"
+    },
+    {
+      "label": "BattMo base parameters",
+      "description": "Canonical BattMo base parameter file used by the model workflow.",
+      "path": "assets/data/h0b-base.json",
+      "format": "text"
+    },
+    {
+      "label": "BattMo equilibrium calibration parameters",
+      "description": "Low-rate calibrated BattMo parameters.",
+      "path": "assets/data/equilibrium-calibration-parameters.json",
+      "format": "text"
+    },
+    {
+      "label": "BattMo high-rate calibration parameters",
+      "description": "High-rate calibrated BattMo parameters used in validation.",
+      "path": "assets/data/high-rate-calibration-parameters.json",
+      "format": "text"
+    },
+    {
+      "label": "Software citation metadata",
+      "description": "Machine-readable citation metadata for the repository.",
+      "path": "assets/data/CITATION.cff",
+      "format": "text"
+    }
+  ]
+}

@@ -1,0 +1,181 @@
+{
+  "PositiveElectrode": {
+    "Coating": {
+      "ActiveMaterial": {
+        "Interface": {
+          "volumetricSurfaceArea": 222275.44206886273,
+          "guestStoichiometry100": 0.12825231675972379,
+          "guestStoichiometry0": 0.88428030550713821,
+          "activationEnergyOfReaction": 40460,
+          "chargeTransferCoefficient": 0.5,
+          "numberOfElectronsTransferred": 1,
+          "openCircuitPotential": {
+            "argumentList": [
+              "stoichiometry"
+            ],
+            "functionName": "computeOCPcathodeH0b",
+            "functionFormat": "named function"
+          },
+          "exchangeCurrentDensity": {
+            "argumentList": [
+              "soc"
+            ],
+            "functionName": "computeJ0cathodeH0b",
+            "functionFormat": "named function"
+          },
+          "saturationConcentration": 23761
+        },
+        "SolidDiffusion": {
+          "referenceDiffusionCoefficient": 3.4597121093775474E-14,
+          "activationEnergyOfDiffusion": 5630,
+          "particleRadius": 8.94E-6,
+          "numberOfDiscreteCells": 10
+        },
+        "density": 4200,
+        "diffusionModelType": "full",
+        "massFraction": 0.92
+      },
+      "volumeFraction": 0.67336120954893108,
+      "numberOfDiscreteCells": 10,
+      "thickness": 7.65E-5,
+      "bruggemanCoefficient": 1.9818678700163161,
+      "electronicConductivity": 18,
+      "effectiveElectronicConductivity": 18,
+      "Binder": {
+        "density": 1800,
+        "massFraction": 0.04,
+        "electronicConductivity": 18
+      },
+      "ConductingAdditive": {
+        "density": 1800,
+        "massFraction": 0.04,
+        "electronicConductivity": 18
+      }
+    },
+    "CurrentCollector": {
+      "electronicConductivity": 3.55E+7,
+      "thermalConductivity": 170,
+      "specificHeatCapacity": 875,
+      "density": 2700,
+      "thickness": 2E-5,
+      "numberOfDiscreteCells": 10
+    }
+  },
+  "NegativeElectrode": {
+    "Coating": {
+      "ActiveMaterial": {
+        "SolidDiffusion": {
+          "referenceDiffusionCoefficient": 1.4273470501676739E-13,
+          "activationEnergyOfDiffusion": 13820,
+          "particleRadius": 1.63E-5,
+          "numberOfDiscreteCells": 10
+        },
+        "Interface": {
+          "guestStoichiometry100": 0.78582795783217141,
+          "guestStoichiometry0": 0,
+          "chargeTransferCoefficient": 0.5,
+          "exchangeCurrentDensity": {
+            "argumentList": [
+              "soc"
+            ],
+            "functionName": "computeJ0anodeH0b",
+            "functionFormat": "named function"
+          },
+          "numberOfElectronsTransferred": 1,
+          "openCircuitPotential": {
+            "argumentList": [
+              "stoichiometry"
+            ],
+            "functionName": "computeOCPanodeH0b",
+            "functionFormat": "named function"
+          },
+          "saturationConcentration": 31360,
+          "volumetricSurfaceArea": 1.54E+6
+        },
+        "density": 2250,
+        "diffusionModelType": "full",
+        "massFraction": 0.96
+      },
+      "volumeFraction": 0.59934696827670109,
+      "numberOfDiscreteCells": 10,
+      "thickness": 5.65E-5,
+      "bruggemanCoefficient": 2.3570827297901848,
+      "electronicConductivity": 62,
+      "effectiveElectronicConductivity": 62,
+      "Binder": {
+        "density": 1320,
+        "massFraction": 0.03,
+        "electronicConductivity": 62
+      },
+      "ConductingAdditive": {
+        "density": 1800,
+        "massFraction": 0.01,
+        "electronicConductivity": 62
+      }
+    },
+    "CurrentCollector": {
+      "electronicConductivity": 5.96E+7,
+      "thermalConductivity": 398,
+      "specificHeatCapacity": 385,
+      "density": 8960,
+      "thickness": 1E-5,
+      "numberOfDiscreteCells": 10
+    }
+  },
+  "Electrolyte": {
+    "regionBruggemanCoefficients": {
+      "NegativeElectrode": 1.8624078889485083,
+      "PositiveElectrode": 1.6836565160133157,
+      "Separator": 4.531775112176847
+    },
+    "bgfactor": 1,
+    "bruggemanCoefficient": 1.5,
+    "compnames": [
+      "Li",
+      "PF6"
+    ],
+    "density": 1200,
+    "diffusionCoefficient": {
+      "argumentList": [
+        "concentration",
+        "temperature"
+      ],
+      "functionName": "computeDiffusionCoefficient_Nyman2008",
+      "functionFormat": "named function"
+    },
+    "ionicConductivity": {
+      "argumentList": [
+        "concentration",
+        "temperature"
+      ],
+      "functionName": "computeElectrolyteConductivity_Nyman2008",
+      "name": "conductivity",
+      "functionFormat": "named function"
+    },
+    "name": "orgLiPF6",
+    "species": {
+      "chargeNumber": 1,
+      "nominalConcentration": 1200,
+      "transferenceNumber": 0.226
+    },
+    "useRegionBruggemanCoefficients": true
+  },
+  "include_current_collectors": true,
+  "initT": 298.15,
+  "use_thermal": false,
+  "SOC": 1,
+  "Control": {
+    "DRate": 1,
+    "controlPolicy": "CCDischarge",
+    "lowerCutoffVoltage": 3.5,
+    "rampupTime": 0.1,
+    "useCVswitch": true
+  },
+  "Separator": {
+    "bruggemanCoefficient": 2.9552381408013648,
+    "density": 946,
+    "porosity": 0.48,
+    "thickness": 2.5E-5,
+    "numberOfDiscreteCells": 10
+  }
+}

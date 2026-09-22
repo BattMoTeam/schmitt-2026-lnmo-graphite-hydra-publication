@@ -1,0 +1,30 @@
+{
+  "PositiveElectrode": {
+    "Coating": {
+      "ActiveMaterial": {
+        "Interface": {
+          "volumetricSurfaceArea": 222275.44206886273
+        },
+        "SolidDiffusion": {
+          "referenceDiffusionCoefficient": 3.4597121093775474E-14
+        }
+      }
+    }
+  },
+  "NegativeElectrode": {
+    "Coating": {
+      "ActiveMaterial": {
+        "SolidDiffusion": {
+          "referenceDiffusionCoefficient": 1.4273470501676739E-13
+        }
+      }
+    }
+  },
+  "Electrolyte": {
+    "regionBruggemanCoefficients": {
+      "NegativeElectrode": 1.8624078889485083,
+      "PositiveElectrode": 1.6836565160133157,
+      "Separator": 4.531775112176847
+    }
+  }
+}

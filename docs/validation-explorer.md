@@ -1,0 +1,27 @@
+# Validation Explorer
+
+This page exposes the main BattMo-versus-experiment validation dataset in an interactive form.
+The curves come from `runValidation` using the current equilibrium and high-rate parameter files.
+
+- Use the rate selector to focus on one discharge case or inspect them all together.
+- Hover to read off exact capacity and voltage values.
+- Zoom or pan to inspect the curve shape near the end of discharge.
+
+<div class="control-row">
+  <label for="validation-case-select">Validation case</label>
+  <select id="validation-case-select">
+    <option>Loading...</option>
+  </select>
+</div>
+
+<div id="validation-plot" class="plot-container plot-large"></div>
+
+## Error summary
+
+Errors are calculated from the curves above at experimental sample times up to
+the common end time. RMSE and MAE use equal sample weights; voltage differences
+are BattMo minus experiment.
+
+<div id="validation-summary-table" class="table-container">
+  Loading validation metrics...
+</div>
